@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  discovery:
+    container_name: discovery-service
+    build: .
+    image: discovery-service
+    # image: waffle4everyone/discovery:latest
+    ports:
+      - 6666:6666
+    restart: always
