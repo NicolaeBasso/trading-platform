@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  trade:
+    image: core-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: npm run dev
+    depends_on:
+      - trade-postgres-server
+    expose:
+      - ${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+
+  trade-postgres-server:
+    container_name: trade-postgres-server-service
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    expose:
+      - 5432
+    restart: unless-stopped
+
+volumes:
+  postgres:
+  pgadmin:
