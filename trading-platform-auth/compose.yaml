@@ -14,18 +14,18 @@ services:
     depends_on:
       - user-postgres-server
     expose:
-      - ${PORT}
+      - ${AUTH_SERVICE_PORT}
     ports:
-      - ${PORT}:${PORT}
+      - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
     restart: always
 
   user-postgres-server:
     container_name: user-postgres-server
     image: postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      AUTH_SERVICE_POSTGRES_DB: ${AUTH_SERVICE_POSTGRES_DB}
+      AUTH_SERVICE_POSTGRES_USER: ${AUTH_SERVICE_POSTGRES_USER}
+      AUTH_SERVICE_POSTGRES_PASSWORD: ${AUTH_SERVICE_POSTGRES_PASSWORD}
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres

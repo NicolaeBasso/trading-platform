@@ -2,7 +2,7 @@
 FROM node:18
 
 # Create app directory
-WORKDIR /trading-platform-core/usr/src/app
+WORKDIR /usr/src/trading-platform-core/app
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY ./trading-platform-core/package*.json ./

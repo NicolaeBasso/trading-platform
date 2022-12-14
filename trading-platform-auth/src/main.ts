@@ -28,6 +28,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(5002);
-  console.log(`STARTED: ${process.env.APP_NAME} on port ${process.env.PORT}`);
+  console.log(`STARTED: ${process.env.AUTH_SERVICE_APP_NAME} on port ${process.env.AUTH_SERVICE_PORT}`);
 }
 bootstrap();

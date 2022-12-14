@@ -21,13 +21,13 @@ async function bootstrap() {
     .setTitle('Trading Platform Core Service')
     .setDescription('Trading Platform Core Service license project')
     .setVersion('1.0.0')
-    .addTag('auth')
+    .addTag('core')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT);
-  console.log(`STARTED: ${process.env.APP_NAME} on port ${process.env.PORT}`);
+  await app.listen(process.env.CORE_SERVICE_PORT);
+  console.log(`STARTED: ${process.env.CORE_SERVICE_APP_NAME} on port ${process.env.CORE_SERVICE_PORT}`);
 }
 bootstrap();

@@ -25,11 +25,11 @@ export class HealthController {
   ) {}
 
   async onApplicationBootstrap(): Promise<any> {
-    const port = +this.configService.get<string>('PORT');
+    const port = +this.configService.get<string>('CORE_SERVICE_PORT');
 
     const res = await axios
       .post('http://localhost:6666/update', {
-        type: this.configService.get<string>('APP_NAME'),
+        type: this.configService.get<string>('CORE_SERVICE_APP_NAME'),
         ip: 'localhost',
         port,
       })

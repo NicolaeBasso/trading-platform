@@ -2,16 +2,16 @@
 FROM node:18
 
 # Create app directory
-WORKDIR /trading-platform-core/usr/src/app
+WORKDIR /usr/src/trading-platform-auth/app
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY ./trading-platform-core/package*.json ./
+COPY ./trading-platform-auth/package*.json ./
 
 # Install app dependencies
 RUN npm install
 
 # Bundle app source
-COPY ./trading-platform-core .
+COPY ./trading-platform-auth .
 
 # Creates a "dist" folder with the production build
 RUN npm run build

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  trade:
+  core:
     image: core-service
     build:
       context: .
@@ -12,15 +12,15 @@ services:
       - .:/app
     command: npm run dev
     depends_on:
-      - trade-postgres-server
+      - core-postgres-server
     expose:
       - ${PORT}
     ports:
       - ${PORT}:${PORT}
     restart: always
 
-  trade-postgres-server:
-    container_name: trade-postgres-server-service
+  core-postgres-server:
+    container_name: core-postgres-server-service
     image: postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
