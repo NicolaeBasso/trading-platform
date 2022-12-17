@@ -27,46 +27,58 @@ export class HealthController {
   async onApplicationBootstrap(): Promise<any> {
     const port = +this.configService.get<string>('AUTH_SERVICE_PORT');
 
-    const res = await axios
-    .post(`${this.configService.get<string>('DISCOVERY_URL')}/update`, {
-        type: this.configService.get<string>('AUTH_SERVICE_APP_NAME'),
-        ip: `${this.configService.get<string>('AUTH_SERVICE_CONTAINER_NAME')}`,
-        port,
-      })
-      .catch((err) => {
-        throw new HttpException(
-          'Failed communicating with Discovery Service!',
-          500,
-        );
-      });
-
-    console.log(res.data);
+    try {
+      const res = await axios.post(
+        `${this.configService.get<string>('DISCOVERY_URL')}/update`,
+        {
+          type: this.configService.get<string>('AUTH_SERVICE_APP_NAME'),
+          ip: `${this.configService.get<string>(
+            'AUTH_SERVICE_CONTAINER_NAME',
+          )}`,
+          port,
+        },
+      );
+      console.log(res.data);
+    } catch (err) {
+      // throw new HttpException(
+      //   'Failed communicating with Discovery Service!',
+      //   500,
+      // );
+      console.log(err);
+    }
   }
 
   @Get()
   @HealthCheck()
   check() {
-    return this.health.check([
-      // The process should successfully ping NestJS docs
-      () => this.http.pingCheck('docs.nestjs.com', 'https://docs.nestjs.com'),
-      // The process should successfully notify Discovery Service of its status
-      () => {
-        console.log('Health!');
+    try {
+      return this.health.check([
+        // The process should successfully ping NestJS docs
+        () => this.http.pingCheck('docs.nestjs.com', 'https://docs.nestjs.com'),
+        // The process should successfully notify Discovery Service of its status
+        () => {
+          console.log('Health!');
 
-        return this.http.pingCheck('google.com', 'https://google.com');
-      },
-      // The process should not use more than 300MB memory
-      () =>
-        this.memoryHealthIndicator.checkHeap('memory heap', 300 * 1024 * 1024),
-      // The process should not have more than 300MB RSS memory allocated
-      () =>
-        this.memoryHealthIndicator.checkRSS('memory RSS', 300 * 1024 * 1024),
-      // The used disk storage should not exceed the 50% of the available space
-      () =>
-        this.diskHealthIndicator.checkStorage('disk health', {
-          thresholdPercent: 0.5,
-          path: '/',
-        }),
-    ]);
+          return this.http.pingCheck('google.com', 'https://google.com');
+        },
+        // The process should not use more than 300MB memory
+        () =>
+          this.memoryHealthIndicator.checkHeap(
+            'memory heap',
+            300 * 1024 * 1024,
+          ),
+        // The process should not have more than 300MB RSS memory allocated
+        () =>
+          this.memoryHealthIndicator.checkRSS('memory RSS', 300 * 1024 * 1024),
+        // The used disk storage should not exceed the 50% of the available space
+        () =>
+          this.diskHealthIndicator.checkStorage('disk health', {
+            thresholdPercent: 0.5,
+            path: '/',
+          }),
+      ]);
+    } catch {
+      console.log('Health check failed!');
+    }
   }
 }

@@ -12,7 +12,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     HealthModule,
     ConfigModule.forRoot({
-      envFilePath: 'development.env',
+      envFilePath: '.env',
       isGlobal: true,
     }),
   ],
