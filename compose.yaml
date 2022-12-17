@@ -67,6 +67,20 @@ services:
       - 5432
     restart: unless-stopped
 
+  gateway_service:
+    container_name: gateway
+    image: waffle4everyone/gateway
+    ports:
+      - 5555:5555
+    restart: unless-stopped
+
+  discovery_service:
+    container_name: discovery
+    image: waffle4everyone/discovery
+    ports:
+      - 6666:6666
+    restart: unless-stopped
+
 volumes:
   core_postgres:
   user_postgres:
