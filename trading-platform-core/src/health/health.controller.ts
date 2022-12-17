@@ -28,9 +28,9 @@ export class HealthController {
     const port = +this.configService.get<string>('CORE_SERVICE_PORT');
 
     const res = await axios
-      .post('http://localhost:6666/update', {
+    .post(`${this.configService.get<string>('DISCOVERY_URL')}/update`, {
         type: this.configService.get<string>('CORE_SERVICE_APP_NAME'),
-        ip: 'localhost',
+        ip: `${this.configService.get<string>('CORE_SERVICE_CONTAINER_NAME')}`,
         port,
       })
       .catch((err) => {

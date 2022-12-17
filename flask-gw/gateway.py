@@ -2,7 +2,7 @@ import flask, requests
 import socket
 import threading
 from time import sleep
-
+import pprint, json
 
 # Valid registry names:
 '''
@@ -31,6 +31,10 @@ def register():
         endpoint = f"http://auth-service:5002/register"
         
         resp = requests.post(endpoint, data=flask.request.json, headers=flask.request.headers)
+
+        print(json.loads(resp.content), flush=True)
+        print(flask.request.json, flush=True)
+
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
         headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
         response = flask.Response(resp.content, resp.status_code, headers)
