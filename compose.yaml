@@ -70,6 +70,8 @@ services:
   gateway_service:
     container_name: gateway
     image: waffle4everyone/gateway
+    expose:
+      - 5555
     ports:
       - 5555:5555
     restart: unless-stopped
@@ -77,8 +79,10 @@ services:
   discovery_service:
     container_name: discovery
     image: waffle4everyone/discovery
-    ports:
-      - 6666:6666
+    expose:
+      - 6666
+    # ports:
+    #   - 6666:6666
     restart: unless-stopped
 
 volumes:
