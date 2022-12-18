@@ -10,9 +10,6 @@ COPY ./trading-platform-core/package*.json ./
 # Install app dependencies
 RUN npm install
 
-# Generate Prisma client
-RUN npx prisma generate
-
 # Migrate
 RUN npx prisma migrate dev
 
