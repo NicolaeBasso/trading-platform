@@ -86,7 +86,7 @@ services:
     restart: unless-stopped
 
   redis-cache:
-    container_name: redis-redisjson
+    container_name: redis-cache
     image: redislabs/rejson:latest
     expose:
       - 6379
@@ -95,9 +95,13 @@ services:
 
   py-cache:
     container_name: py-cache
-    image: waffle4everyone/cache
+    image: waffle4everyone/redis-cache:latest
+    # image: temp
+    # build:
+    #   context: .
+    #   dockerfile: flask-cache/Dockerfile-redis-cache
     depends_on:
-      - cache
+      - redis-cache
     expose:
       - 6380
     ports:

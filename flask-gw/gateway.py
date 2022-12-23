@@ -34,8 +34,6 @@ def register():
         
         resp = requests.post(endpoint, data=json.dumps(flask.request.json), headers=flask.request.headers)
 
-        
-
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
         headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
         response = flask.Response(resp.content, resp.status_code, headers)
@@ -72,13 +70,27 @@ def logout():
 
 @gw.get('/ticker/<ticker>')
 def ticker(ticker):
-    try:
+    try:                
+        print(f"/ticker/{ticker}", flush=True)
+
         endpoint = f"http://py-cache:6380/ticker/{ticker}"
         
+
         resp = requests.get(endpoint, headers=flask.request.headers)
-        excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
-        headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
-        response = flask.Response(response=resp.content, status=resp.status_code, headers=headers)
+        print('req was sent to redis', flush=True)
+        print(resp.content, flush=True)
+
+
+        # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+        # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        # response = flask.Response(response=resp.content, status=resp.status_code, headers=headers)
+
+        # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+        # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = flask.Response(response=resp.content, status=resp.status_code)
+
+        # print(response.decode('utf-8'), flush=True)
+
         return response
     except:
         return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})   
