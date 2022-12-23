@@ -70,7 +70,18 @@ def logout():
         return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})    
 
 
-
+@gw.get('/ticker/<ticker>')
+def ticker(ticker):
+    try:
+        endpoint = f"http://py-cache:6380/ticker/{ticker}"
+        
+        resp = requests.get(endpoint, headers=flask.request.headers)
+        excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+        headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = flask.Response(response=resp.content, status=resp.status_code, headers=headers)
+        return response
+    except:
+        return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})   
 
 
 
