@@ -20,7 +20,7 @@ def update():
         sleep(10)
         r.set('msft', tickers['msft'])
         r.set('aapl', tickers['aapl'])
-        r.set('goog', tickers['goog'])
+        r.set('googl', tickers['googl'])
 
         sleep(600)
 

@@ -67,9 +67,13 @@ services:
       - 5432
     restart: unless-stopped
 
-  gateway_service:
+  gateway:
     container_name: gateway
-    image: waffle4everyone/gateway
+    # image: waffle4everyone/gateway
+    image: gateway-service
+    build:
+      context: .
+      dockerfile: gateway.dockerfile
     expose:
       - 5555
     ports:
@@ -78,7 +82,11 @@ services:
 
   discovery_service:
     container_name: discovery
-    image: waffle4everyone/discovery
+    # image: waffle4everyone/discovery
+    image: discovery-service
+    build:
+      context: .
+      dockerfile: discovery.dockerfile
     expose:
       - 6666
     # ports:
@@ -95,11 +103,11 @@ services:
 
   py-cache:
     container_name: py-cache
-    image: waffle4everyone/redis-cache:latest
-    # image: temp
-    # build:
-    #   context: .
-    #   dockerfile: flask-cache/Dockerfile-redis-cache
+    # image: waffle4everyone/redis-cache:latest
+    image: py-cache-service
+    build:
+      context: .
+      dockerfile: redis-cache.dockerfile
     depends_on:
       - redis-cache
     expose:

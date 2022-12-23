@@ -80,7 +80,6 @@ def ticker(ticker):
         print('req was sent to redis', flush=True)
         print(resp.content, flush=True)
 
-
         # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
         # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
         # response = flask.Response(response=resp.content, status=resp.status_code, headers=headers)
