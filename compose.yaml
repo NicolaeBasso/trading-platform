@@ -85,6 +85,24 @@ services:
     #   - 6666:6666
     restart: unless-stopped
 
+  redis-cache:
+    container_name: redis-redisjson
+    image: redislabs/rejson:latest
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+
+  py-cache:
+    container_name: py-cache
+    image: waffle4everyone/cache
+    depends_on:
+      - cache
+    expose:
+      - 6380
+    ports:
+      - 6380:6380  
+
 volumes:
   core_postgres:
   user_postgres:
