@@ -16,6 +16,8 @@ services:
       - core-postgres-server
     expose:
       - ${CORE_SERVICE_PORT}
+    ports:
+      - ${CORE_SERVICE_PORT}:${CORE_SERVICE_PORT}
     restart: always
 
   auth:
@@ -33,6 +35,8 @@ services:
       - user-postgres-server
     expose:
       - ${AUTH_SERVICE_PORT}
+    ports:
+      - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
     restart: always
 
   core-postgres-server:
@@ -89,8 +93,8 @@ services:
       dockerfile: discovery.dockerfile
     expose:
       - 6666
-    # ports:
-    #   - 6666:6666
+    ports:
+      - 6666:6666
     restart: unless-stopped
 
   redis-cache:
