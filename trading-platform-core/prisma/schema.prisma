@@ -18,7 +18,29 @@ model User {
   updateAt DateTime @updatedAt()
 }
 
+model Trade {
+  id String @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  type TradeType? @default(CFD) 
+  isOpen Boolean @default(false)
+  leverageRatio Int @default(1)
+  marginSize Float
+  leverageSize Float
+  tradeSize Float
+  priceOpened Int
+  priceClosed Float
+  overnightInterest Float @default(0.1)
+  overnightFee Float
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum TradeType {
+  CFD
+  OPTION
+  STOCK
 }
