@@ -20,7 +20,7 @@ export class TradeController {
     return this.tradeService.create(createTradeDto);
   }
 
-  @Get()
+  @Get('/all')
   findAll() {
     console.log('findAll!');
     return this.tradeService.findAll();
@@ -28,16 +28,21 @@ export class TradeController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.tradeService.findOne(+id);
+    return this.tradeService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTradeDto: UpdateTradeDto) {
-    return this.tradeService.update(+id, updateTradeDto);
+    return this.tradeService.update(id, updateTradeDto);
+  }
+
+  @Patch(':id')
+  close(@Param('id') id: string) {
+    return this.tradeService.close(id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tradeService.remove(+id);
+    return this.tradeService.remove(id);
   }
 }

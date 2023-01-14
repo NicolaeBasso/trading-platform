@@ -9,27 +9,48 @@ import { Trade } from './entities/trade.entity';
 export class TradeService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
-  create(createTradeDto: CreateTradeDto) {
-    // const tradeCreated = this.prisma.trade.create({
-    //   data: { id: 'x', isOpen: true, priceOpen: 1000 },
-    // });
-    return 'This action adds a new trade';
+  async create(createTradeDto: CreateTradeDto) {
+    const { pair, tradeSize } = createTradeDto;
+
+    const tradeCreated = await this.prisma.trade.create({
+      data: {
+        pair,
+        tradeSize,
+        isOpen: true,
+        priceOpened: 200,
+        overnightInterest: 0.15,
+        overnightFee: 0.1,
+      },
+    });
+
+    return tradeCreated;
   }
 
-  async findAll(): Promise<Trade[]> {
-    return [];
-    // return `This action returns all trades`;
+  async findAll(): Promise<Trade[] & any> {
+    return this.prisma.trade.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} trade`;
+  findOne(id: string) {
+    return this.prisma.trade.findFirstOrThrow({ where: { id } });
   }
 
-  update(id: number, updateTradeDto: UpdateTradeDto) {
-    return `This action updates a #${id} trade`;
+  update(id: string, updateTradeDto: UpdateTradeDto) {
+    const { pair, tradeSize } = updateTradeDto;
+
+    return this.prisma.trade.update({
+      where: { id },
+      data: { pair, tradeSize },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} trade`;
+  close(id: string) {
+    return this.prisma.trade.update({
+      where: { id },
+      data: { isOpen: false },
+    });
+  }
+
+  remove(id: string) {
+    return this.prisma.trade.delete({ where: { id } });
   }
 }

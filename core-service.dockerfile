@@ -1,14 +1,15 @@
 # Base image
 FROM node:18
 
-USER root
-
 # Create app directory
 WORKDIR /trading-platform-core/app
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY ./trading-platform-core ./
 # COPY ./trading-platform-core/package*.json ./
+
+# Remove node_modules and dist
+RUN rm -rf dist && rm -rf node_modules
 
 # Install app dependencies
 RUN npm install
@@ -27,6 +28,3 @@ RUN npx prisma generate
 
 # Start the server in development mode
 CMD [ "npm", "run", "dev" ]
-
-# Use the node user from the image (instead of the root user)
-# USER node

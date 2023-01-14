@@ -1,5 +1,3 @@
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -24,14 +22,15 @@ model Trade {
   updatedAt DateTime @updatedAt()
   type TradeType? @default(CFD) 
   isOpen Boolean @default(false)
+  pair String @default("BTC/USD")
   leverageRatio Int @default(1)
-  marginSize Float
-  leverageSize Float
-  tradeSize Float
-  priceOpened Int
-  priceClosed Float
+  marginSize Float?
+  leverageSize Float?
+  tradeSize Float @default(1)
+  priceOpened Float  
+  priceClosed Float?
   overnightInterest Float @default(0.1)
-  overnightFee Float
+  overnightFee Float?
 }
 
 enum Role {
