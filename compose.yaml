@@ -10,7 +10,7 @@ services:
     env_file:
       - ./trading-platform-core/.env
     volumes:
-      - .:/app
+      - ./trading-platform-core:/app
     command: npm run dev
     depends_on:
       - user-postgres-server
@@ -30,7 +30,7 @@ services:
     env_file:
       - ./trading-platform-auth/.env
     volumes:
-      - .:/app
+      - ./trading-platform-auth:/app
     command: npm run dev
     depends_on:
       - user-postgres-server

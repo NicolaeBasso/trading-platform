@@ -1,7 +1,7 @@
 export class CreateTradeDto {
-  id: string;
-  type: string;
-  isOpen: boolean;
-  pair: string;
-  tradeSize: number;
+  public id: string;
+  public type: string;
+  public isOpen: boolean;
+  public pair: string;
+  public tradeSize: number;
 }

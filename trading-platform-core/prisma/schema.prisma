@@ -6,16 +6,6 @@ datasource db {
   provider = "postgresql"
   url      = env("CORE_SERVICE_DATABASE_URL")
 }
-
-model User {
-  id    String  @unique @default(uuid()) 
-  email String  @unique
-  hashedPassword String 
-  role Role? @default(USER)
-  createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt()
-}
-
 model Trade {
   id String @unique @default(uuid())
   createdAt DateTime @default(now())
@@ -31,11 +21,6 @@ model Trade {
   priceClosed Float?
   overnightInterest Float @default(0.1)
   overnightFee Float?
-}
-
-enum Role {
-  USER
-  ADMIN
 }
 
 enum TradeType {

@@ -16,7 +16,8 @@ export class TradeController {
   constructor(private readonly tradeService: TradeService) {}
 
   @Post()
-  create(@Body() createTradeDto: CreateTradeDto) {
+  create(@Body() createTradeDto: any) {
+    console.log({ createTradeDto });
     return this.tradeService.create(createTradeDto);
   }
 
@@ -31,12 +32,12 @@ export class TradeController {
     return this.tradeService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('/update/:id')
   update(@Param('id') id: string, @Body() updateTradeDto: UpdateTradeDto) {
     return this.tradeService.update(id, updateTradeDto);
   }
 
-  @Patch(':id')
+  @Patch('/close/:id')
   close(@Param('id') id: string) {
     return this.tradeService.close(id);
   }

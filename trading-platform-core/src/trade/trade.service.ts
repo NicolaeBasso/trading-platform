@@ -12,6 +12,8 @@ export class TradeService {
   async create(createTradeDto: CreateTradeDto) {
     const { pair, tradeSize } = createTradeDto;
 
+    console.log('createTradeDto = ', { pair, tradeSize });
+
     const tradeCreated = await this.prisma.trade.create({
       data: {
         pair,
@@ -27,6 +29,7 @@ export class TradeService {
   }
 
   async findAll(): Promise<Trade[] & any> {
+    return 'hoho';
     return this.prisma.trade.findMany();
   }
 
