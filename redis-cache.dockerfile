@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 WORKDIR /usr/src/trading-platform-cache/app
-RUN pip3 install flask redis yfinance
+RUN pip3 install flask redis yfinance requests
 COPY ./flask-cache .
 CMD ["python3", "cache.py"]
 
