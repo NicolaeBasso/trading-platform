@@ -5,7 +5,7 @@ services:
     container_name: core-service
     image: core-service
     build:
-      context: .
+      context: ./trading-platform-core
       dockerfile: core-service.dockerfile
     env_file:
       - ./trading-platform-core/.env

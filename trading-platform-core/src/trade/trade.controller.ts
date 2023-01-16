@@ -23,7 +23,8 @@ export class TradeController {
 
   @Get('/all')
   findAll() {
-    console.log('findAll!');
+    // console.log('findAll!');
+    console.log('New!');
     return this.tradeService.findAll();
   }
 
