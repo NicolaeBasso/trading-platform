@@ -111,11 +111,6 @@ def test():
         return flask.jsonify({"status": "idk something went wrong"})  
 
 
-
-
-
-
-
 def update():
     global GATEWAY_REGISTRY
     while True:

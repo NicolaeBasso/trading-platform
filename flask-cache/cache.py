@@ -126,16 +126,19 @@ def update_cache():
     for res in ['MINUTE', 'MINUTE_5', 'MINUTE_15', 'MINUTE_30', 'HOUR', 'HOUR_4', 'DAY', 'WEEK']:
         data = historical_price(resolution=res)
         r.json().set('BTCUSD', Path(f'.{res}'), data)
- 
-
 
 
 cache = flask.Flask(__name__)
-@cache.get('/btcusd')
-def btcusd():
-    data = r.json().get('BTCUSD')
-    return flask.jsonify(data)
-
+@cache.get('/BTCUSD/<interval>')
+def btcusd(interval):
+    if interval == 'ALL':
+        data = r.json().get('BTCUSD')
+        print(interval, flush=True)
+        return flask.jsonify(data)
+    else:
+        data = r.json().get('BTCUSD', f'$.{interval}')
+        print(interval, flush=True)
+        return flask.jsonify(data)
 
 
 if __name__ == '__main__':
