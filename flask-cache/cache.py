@@ -3,12 +3,12 @@ import threading
 from time import sleep
 import yfinance as yf
 import redis
-import json
 
-tickers = {
-    'msft': yf.Ticker('MSFT').analyst_price_target.to_json(),
-    'aapl': yf.Ticker('AAPL').analyst_price_target.to_json(),
-    'goog': yf.Ticker('GOOGL').analyst_price_target.to_json()
+
+cached_tickers = {
+    'gspc': yf.Ticker('^GSPC').analyst_price_target.to_json(),
+    'gdaxi': yf.Ticker('^gdaxi').analyst_price_target.to_json(),
+    'ndx': yf.Ticker('^ndx').analyst_price_target.to_json()
 
 }
 
@@ -18,11 +18,12 @@ r = redis.Redis(host='redis-cache', port=6379, db=0)
 def update():
     while True:
         sleep(10)
-        r.set('msft', tickers['msft'])
-        r.set('aapl', tickers['aapl'])
-        r.set('googl', tickers['googl'])
+        r.set('gspc', cached_tickers['gspc'])
+        r.set('gdaxi', cached_tickers['gdaxi'])
+        r.set('ndx', cached_tickers['ndx'])
 
         sleep(600)
+
 
 
 app = flask.Flask(__name__)
@@ -30,6 +31,16 @@ app = flask.Flask(__name__)
 
 @app.get('/ticker/<ticker>')
 def ticker(ticker):
+    if ticker not in cached_tickers:
+        try:
+            _ = yf.Ticker(ticker).analyst_price_target.to_json()
+        except:
+            return flask.jsonify({"status": "wrong ticker"})
+        finally:
+            return flask.jsonify(_)
+            
+
+
     try:
         print(f"/ticker/{ticker}", flush=True)
         resp = r.get(f'{ticker}')
