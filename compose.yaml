@@ -6,12 +6,12 @@ services:
     image: core-service
     build:
       context: ./trading-platform-core
-      dockerfile: core-service.dockerfile
+      dockerfile: Dockerfile
     env_file:
       - ./trading-platform-core/.env
     volumes:
       - ./trading-platform-core:/app
-    command: npm run dev
+    # command: npm run migrate:dev
     depends_on:
       - user-postgres-server
       - core-postgres-server

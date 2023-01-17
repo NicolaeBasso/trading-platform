@@ -29,7 +29,7 @@ export class TradeService {
   }
 
   async findAll(): Promise<Trade[] & any> {
-    return 'hoho';
+    // return 'docker-godmode-on';
     return this.prisma.trade.findMany();
   }
 
