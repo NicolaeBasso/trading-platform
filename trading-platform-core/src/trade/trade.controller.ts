@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
@@ -16,7 +17,10 @@ export class TradeController {
   constructor(private readonly tradeService: TradeService) {}
 
   @Post()
-  create(@Body() createTradeDto: any) {
+  create(
+    @Body()
+    createTradeDto: CreateTradeDto,
+  ) {
     console.log({ createTradeDto });
     return this.tradeService.create(createTradeDto);
   }
@@ -25,6 +29,7 @@ export class TradeController {
   findAll() {
     // console.log('findAll!');
     console.log('New!');
+    // return [];
     return this.tradeService.findAll();
   }
 
@@ -43,8 +48,13 @@ export class TradeController {
     return this.tradeService.close(id);
   }
 
-  @Delete(':id')
+  @Delete('/remove/:id')
   remove(@Param('id') id: string) {
     return this.tradeService.remove(id);
+  }
+
+  @Delete('/removeAll')
+  removeAll() {
+    return this.tradeService.removeAll();
   }
 }

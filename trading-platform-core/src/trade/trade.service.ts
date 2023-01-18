@@ -12,8 +12,6 @@ export class TradeService {
   async create(createTradeDto: CreateTradeDto) {
     const { pair, tradeSize } = createTradeDto;
 
-    console.log('createTradeDto = ', { pair, tradeSize });
-
     const tradeCreated = await this.prisma.trade.create({
       data: {
         pair,
@@ -29,7 +27,6 @@ export class TradeService {
   }
 
   async findAll(): Promise<Trade[] & any> {
-    // return 'docker-godmode-on';
     return this.prisma.trade.findMany();
   }
 
@@ -55,5 +52,9 @@ export class TradeService {
 
   remove(id: string) {
     return this.prisma.trade.delete({ where: { id } });
+  }
+
+  removeAll() {
+    return this.prisma.trade.deleteMany({});
   }
 }

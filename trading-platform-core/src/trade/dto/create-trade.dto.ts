@@ -1,7 +1,13 @@
+import { IsBoolean, IsNumber, IsString, IsOptional } from 'class-validator';
+
 export class CreateTradeDto {
-  public id: string;
-  public type: string;
-  public isOpen: boolean;
-  public pair: string;
-  public tradeSize: number;
+  @IsOptional()
+  @IsString()
+  type?: string;
+  @IsBoolean()
+  isOpen: boolean;
+  @IsString()
+  pair: string;
+  @IsNumber()
+  tradeSize: number;
 }
