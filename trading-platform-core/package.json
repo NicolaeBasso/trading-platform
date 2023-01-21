@@ -12,6 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "dev": "nest start --watch",
+    "migrate:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "migrate": "npx prisma migrate dev",
@@ -23,10 +24,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.6.0",
     "@nestjs/axios": "^1.0.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.2.1",
+    "@nestjs/elasticsearch": "^9.0.0",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/mapped-types": "^1.2.0",
     "@nestjs/passport": "^9.0.0",

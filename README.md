@@ -57,7 +57,7 @@ docker-compose up -d --build
 
 npx prisma migrate dev --name <name-of-new-migration>
 
-#### Migrate:
+#### Migrate (run on host or in docker container for docker setup):
 
 npx prisma migrate dev
 

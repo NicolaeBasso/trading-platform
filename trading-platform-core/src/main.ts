@@ -28,6 +28,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.CORE_SERVICE_PORT);
-  console.log(`STARTED: ${process.env.CORE_SERVICE_APP_NAME} on port ${process.env.CORE_SERVICE_PORT}`);
+  console.log(
+    `STARTED: ${process.env.CORE_SERVICE_APP_NAME} on port ${process.env.CORE_SERVICE_PORT}`,
+  );
 }
 bootstrap();
