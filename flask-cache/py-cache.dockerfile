@@ -1,7 +1,7 @@
 FROM python:3.9-slim
-WORKDIR /usr/src/trading-platform-cache/app
+WORKDIR /app
 RUN pip3 install flask redis requests
-COPY ./flask-cache .
+COPY . .
 CMD ["python3", "cache.py"]
 
 # docker build -f Dockerfile-redis-cache -t waffle4everyone/redis-cache .

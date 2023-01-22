@@ -81,7 +81,7 @@ services:
     # image: waffle4everyone/gateway
     image: gateway-service
     build:
-      context: .
+      # context: ./flask-gw
       dockerfile: gateway.dockerfile
     expose:
       - 5555
@@ -94,13 +94,29 @@ services:
     # image: waffle4everyone/discovery
     image: discovery-service
     build:
-      context: .
+      context: ./fkask-sd
       dockerfile: discovery.dockerfile
     expose:
       - 6666
     ports:
       - 6666:6666
     restart: unless-stopped
+
+
+  sentinel:
+    image: redis:6.2.0-alpine
+    command: redis-server /etc/redis/sentinel.conf --sentinel
+    environment:
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=3000
+      - SENTINEL_QUORUM=2
+      - SENTINEL_MASTER_NAME=mymaster
+      - SENTINEL_MASTER_IP=redis-cache
+      - SENTINEL_MASTER_PORT=6379
+      - SENTINEL_SLAVE_IP=redis-slave
+      - SENTINEL_SLAVE_PORT=6379
+    ports:
+      - "26379:26379"
 
   redis-cache:
     container_name: redis-cache
@@ -109,14 +125,26 @@ services:
       - 6379
     ports:
       - 6379:6379
+    environment:
+      - MASTER=true
+      - SERVICE_NAME=master
+
+  redis-slave:
+    container_name: redis-slave
+    image: redis:6.2.0-alpine
+    environment:
+      - SERVICE_NAME=slave
+
+
+
 
   py-cache:
     container_name: py-cache
     # image: waffle4everyone/redis-cache:latest
     image: py-cache-service
     build:
-      context: .
-      dockerfile: redis-cache.dockerfile
+      # context: ./flask-cache
+      dockerfile: py-cache.dockerfile
     depends_on:
       - redis-cache
     expose:

@@ -1,6 +1,6 @@
 FROM python:3.9-slim
-WORKDIR /usr/src/trading-platform-discovery/app
-COPY ./flask-sd .
+WORKDIR /app
+COPY . .
 RUN pip3 install flask requests
 CMD ["python3", "discovery.py"]
 

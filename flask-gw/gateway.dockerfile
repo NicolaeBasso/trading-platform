@@ -1,6 +1,6 @@
 FROM python:3.9-slim
-WORKDIR /usr/src/trading-platform-gateway/app
-COPY ./flask-gw .
+WORKDIR /app
+COPY . .
 RUN pip3 install flask requests
 CMD ["python3", "gateway.py"]
 
