@@ -12,6 +12,7 @@ services:
       - ./trading-platform-core:/app
     # command: npm run migrate:dev
     depends_on:
+      - discovery_service
       - user-postgres-server
       - core-postgres-server
     expose:
@@ -31,6 +32,7 @@ services:
       - ./trading-platform-auth:/app
     # command: npm run migrate:dev
     depends_on:
+      - discovery_service
       - user-postgres-server
     expose:
       - ${AUTH_SERVICE_PORT}
@@ -92,6 +94,8 @@ services:
     image: discovery-service
     build:
       context: ./flask-sd
+    depends_on:
+      - gateway
     expose:
       - 6666
     ports:
