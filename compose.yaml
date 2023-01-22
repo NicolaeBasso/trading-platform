@@ -131,9 +131,6 @@ services:
     environment:
       - SERVICE_NAME=slave
 
-
-
-
   py-cache:
     container_name: py-cache
     # image: waffle4everyone/redis-cache:latest
