@@ -6,7 +6,6 @@ services:
     image: core-service
     build:
       context: ./trading-platform-core
-      dockerfile: Dockerfile
     env_file:
       - ./trading-platform-core/.env
     volumes:
@@ -26,7 +25,6 @@ services:
     image: auth-service
     build:
       context: ./trading-platform-auth
-      dockerfile: Dockerfile
     env_file:
       - ./trading-platform-auth/.env
     volumes:
@@ -81,8 +79,7 @@ services:
     # image: waffle4everyone/gateway
     image: gateway-service
     build:
-      # context: ./flask-gw
-      dockerfile: gateway.dockerfile
+      context: ./flask-gw
     expose:
       - 5555
     ports:
@@ -94,8 +91,7 @@ services:
     # image: waffle4everyone/discovery
     image: discovery-service
     build:
-      context: ./fkask-sd
-      dockerfile: discovery.dockerfile
+      context: ./flask-sd
     expose:
       - 6666
     ports:
@@ -143,8 +139,7 @@ services:
     # image: waffle4everyone/redis-cache:latest
     image: py-cache-service
     build:
-      # context: ./flask-cache
-      dockerfile: py-cache.dockerfile
+      context: ./flask-cache
     depends_on:
       - redis-cache
     expose:
