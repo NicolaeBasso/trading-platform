@@ -25,7 +25,7 @@ export class TradeController {
     return this.tradeService.create(createTradeDto);
   }
 
-  @Get('/all')
+  @Get('all')
   findAll() {
     // console.log('findAll!');
     console.log('New!');
@@ -38,12 +38,12 @@ export class TradeController {
     return this.tradeService.findOne(id);
   }
 
-  @Patch('/update/:id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateTradeDto: UpdateTradeDto) {
     return this.tradeService.update(id, updateTradeDto);
   }
 
-  @Patch('/close/:id')
+  @Patch('close/:id')
   close(@Param('id') id: string) {
     return this.tradeService.close(id);
   }
