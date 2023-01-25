@@ -76,7 +76,7 @@ services:
 
   gateway:
     container_name: gateway
-    # image: waffle4everyone/gateway
+    image: waffle4everyone/gateway
     image: gateway-service
     build:
       context: ./flask-gw
@@ -88,7 +88,7 @@ services:
 
   discovery_service:
     container_name: discovery
-    # image: waffle4everyone/discovery
+    image: waffle4everyone/discovery
     image: discovery-service
     build:
       context: ./flask-sd
@@ -99,49 +99,48 @@ services:
     restart: unless-stopped
 
 
-  sentinel:
-    image: redis:6.2.0-alpine
-    command: redis-server /etc/redis/sentinel.conf --sentinel
-    environment:
-      - SENTINEL_DOWN_AFTER=5000
-      - SENTINEL_FAILOVER=3000
-      - SENTINEL_QUORUM=2
-      - SENTINEL_MASTER_NAME=mymaster
-      - SENTINEL_MASTER_IP=redis-cache
-      - SENTINEL_MASTER_PORT=6379
-      - SENTINEL_SLAVE_IP=redis-slave
-      - SENTINEL_SLAVE_PORT=6379
-    ports:
-      - "26379:26379"
-
-  redis-cache:
-    container_name: redis-cache
-    image: redislabs/rejson:latest
+  redis-master:
+    container_name: redis-master
+    image: redislabs/rejson
     expose:
       - 6379
     ports:
       - 6379:6379
-    environment:
-      - MASTER=true
-      - SERVICE_NAME=master
-
+      
   redis-slave:
     container_name: redis-slave
-    image: redis:6.2.0-alpine
-    environment:
-      - SERVICE_NAME=slave
+    image: redislabs/rejson
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --slaveof redis-master 6379
+    links:
+      - redis-master
 
+  sentinel:
+    container_name: sentinel
+    image: redislabs/rejson
+    command: >
+      bash -c "echo 'port 26379' > sentinel.conf &&
+      echo 'dir /tmp' >> sentinel.conf &&
+      echo 'sentinel monitor redis-master redis-master 6379 2' >> sentinel.conf &&
+      echo 'sentinel down-after-milliseconds redis-master 5000' >> sentinel.conf &&
+      echo 'sentinel parallel-syncs redis-master 1' >> sentinel.conf &&
+      echo 'sentinel failover-timeout redis-master 5000' >> sentinel.conf &&
+      echo 'sentinel resolve-hostnames yes' >> sentinel.conf &&
+      
+      cat sentinel.conf &&
+      redis-server sentinel.conf --sentinel"
+    links:
+      - redis-master
+      - redis-slave
 
 
 
   py-cache:
     container_name: py-cache
-    # image: waffle4everyone/redis-cache:latest
-    image: py-cache-service
+    image: py-cache
     build:
       context: ./flask-cache
     depends_on:
-      - redis-cache
+      - redis-master
     expose:
       - 6380
     ports:

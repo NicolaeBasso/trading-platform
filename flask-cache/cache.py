@@ -12,7 +12,7 @@ session_headers = {
     'CST': None
 }
 
-r = redis.Redis(host='redis-cache', port=6379, db=0)
+r = redis.Redis(host='redis-master', port=6379, db=0)
 
 
 def create_session():
@@ -131,13 +131,16 @@ def update_cache():
 cache = flask.Flask(__name__)
 @cache.get('/BTCUSD/<interval>')
 def btcusd(interval):
+    print('get received', flush=True)
     if interval == 'ALL':
         data = r.json().get('BTCUSD')
         print(interval, flush=True)
+        print('if get', flush=True)
         return flask.jsonify(data)
     else:
         data = r.json().get('BTCUSD', f'$.{interval}')
         print(interval, flush=True)
+        print('else get', flush=True)
         return flask.jsonify(data)
 
 
