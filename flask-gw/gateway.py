@@ -4,6 +4,9 @@ import threading
 from time import sleep
 import json
 
+from prometheus_flask_exporter import PrometheusMetrics
+
+
 # Valid registry names:
 '''
 discovery_service
@@ -23,7 +26,8 @@ GATEWAY_PORT = 5555
 DISCOVERY = '127.0.0.1:6666'
 
 gw = flask.Flask(__name__)
-
+metrics = PrometheusMetrics(gw)
+# /metrics endpoint
 
 @gw.post('/auth/register')
 def register():
