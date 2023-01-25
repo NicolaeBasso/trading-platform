@@ -12,6 +12,7 @@ services:
       - ./trading-platform-core:/app
     # command: npm run migrate:dev
     depends_on:
+      - discovery_service
       - user-postgres-server
       - core-postgres-server
     expose:
@@ -31,6 +32,7 @@ services:
       - ./trading-platform-auth:/app
     # command: npm run migrate:dev
     depends_on:
+      - discovery_service
       - user-postgres-server
     expose:
       - ${AUTH_SERVICE_PORT}
@@ -76,7 +78,6 @@ services:
 
   gateway:
     container_name: gateway
-    image: waffle4everyone/gateway
     image: gateway-service
     build:
       context: ./flask-gw
@@ -88,10 +89,11 @@ services:
 
   discovery_service:
     container_name: discovery
-    image: waffle4everyone/discovery
     image: discovery-service
     build:
       context: ./flask-sd
+    depends_on:
+      - gateway
     expose:
       - 6666
     ports:
@@ -205,9 +207,41 @@ services:
     networks:
       - elastic
 
+  prometheus:
+    image: prom/prometheus:v2.20.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - 9090:9090
+    expose:
+      - 9090
+    # networks:
+    #   - monitoring
+
+  grafana:
+    image: grafana/grafana:8.2.6
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    ports:
+      - 6789:3000
+    expose:
+      - 3000
+    # networks:
+    #   - monitoring
+
 volumes:
   core_postgres:
   user_postgres:
+  prometheus_data: {}
+  grafana_data: {}
   data01:
     driver: local
   data02:
