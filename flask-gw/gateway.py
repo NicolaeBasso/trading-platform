@@ -72,17 +72,15 @@ def logout():
         return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})    
 
 
-@gw.get('/ticker/<ticker>')
+@gw.get('/BTCUSD/<ticker>')
 def ticker(ticker):
     try:                
-        print(f"/ticker/{ticker}", flush=True)
+        # print(f"/ticker/{ticker}", flush=True)
 
-        endpoint = f"http://py-cache:6380/ticker/{ticker}"
+        endpoint = f"http://py-cache:6380/BTCUSD/{ticker}"
         
 
         resp = requests.get(endpoint, headers=flask.request.headers)
-        print('req was sent to redis', flush=True)
-        print(resp.content, flush=True)
 
         # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
         # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
