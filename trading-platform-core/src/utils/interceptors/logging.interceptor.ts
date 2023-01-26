@@ -27,7 +27,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const userId = request.user?.userId;
 
     this.logger.log(
-      `[${correlationKey}] ${method} ${url} ${userId} ${userAgent} ${ip}: ${
+      `[KEY: ${correlationKey}] METHOD: ${method} | URL: ${url} | UID: ${userId} | AGENT: ${userAgent} | IP: ${ip}: ${
         context.getClass().name
       } ${context.getHandler().name}`,
     );
@@ -41,7 +41,7 @@ export class LoggingInterceptor implements NestInterceptor {
         const contentLength = response.get('content-length');
 
         this.logger.log(
-          `[${correlationKey}] ${method} ${url} ${statusCode} ${contentLength}: ${
+          `[KEY: ${correlationKey}] | METHOD: ${method} | URL: ${url} | CODE: ${statusCode} | LENGTH: ${contentLength}: ${
             Date.now() - now
           }ms`,
         );

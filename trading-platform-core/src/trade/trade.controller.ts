@@ -7,10 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { RolesGuard } from '../utils/guards/roles.guard';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
+import { RolesDecorator } from '../utils/decorators/roles.decorator';
+import { Roles } from '../utils/constants';
 
 @Controller('trade')
 export class TradeController {
@@ -26,6 +30,7 @@ export class TradeController {
   }
 
   @Get('all')
+
   findAll() {
     // console.log('findAll!');
     console.log('New!');
@@ -54,6 +59,8 @@ export class TradeController {
   }
 
   @Delete('/removeAll')
+  @RolesDecorator(Roles.ADMIN)
+  @UseGuards(RolesGuard)
   removeAll() {
     return this.tradeService.removeAll();
   }
