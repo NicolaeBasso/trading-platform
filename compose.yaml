@@ -5,11 +5,11 @@ services:
     container_name: core-service
     image: core-service
     build:
-      context: ./trading-platform-core
+      context: ./core
     env_file:
-      - ./trading-platform-core/.env
+      - ./core/.env
     volumes:
-      - ./trading-platform-core:/app
+      - ./core:/app
     # command: npm run migrate:dev
     depends_on:
       - discovery_service
@@ -25,11 +25,11 @@ services:
     container_name: auth-service
     image: auth-service
     build:
-      context: ./trading-platform-auth
+      context: ./auth
     env_file:
-      - ./trading-platform-auth/.env
+      - ./auth/.env
     volumes:
-      - ./trading-platform-auth:/app
+      - ./auth:/app
     # command: npm run migrate:dev
     depends_on:
       - discovery_service
@@ -44,7 +44,7 @@ services:
     container_name: core-postgres-server
     image: postgres
     env_file:
-    - ./trading-platform-core/.env
+    - ./core/.env
     environment:
       POSTGRES_DB: ${CORE_SERVICE_POSTGRES_DB}
       POSTGRES_USER: ${CORE_SERVICE_POSTGRES_USER}
@@ -62,7 +62,7 @@ services:
     container_name: user-postgres-server
     image: postgres
     env_file:
-    - ./trading-platform-auth/.env
+    - ./auth/.env
     environment:
       POSTGRES_DB: ${AUTH_SERVICE_POSTGRES_DB}
       POSTGRES_USER: ${AUTH_SERVICE_POSTGRES_USER}
@@ -80,7 +80,7 @@ services:
     container_name: gateway
     image: gateway-service
     build:
-      context: ./flask-gw
+      context: ./gateway
     expose:
       - 5555
     ports:
@@ -91,7 +91,7 @@ services:
     container_name: discovery
     image: discovery-service
     build:
-      context: ./flask-sd
+      context: ./discovery
     depends_on:
       - gateway
     expose:
@@ -140,7 +140,7 @@ services:
     container_name: py-cache
     image: py-cache
     build:
-      context: ./flask-cache
+      context: ./cache
     depends_on:
       - redis-master
     expose:
@@ -217,8 +217,6 @@ services:
       - 9090:9090
     expose:
       - 9090
-    # networks:
-    #   - monitoring
 
   grafana:
     image: grafana/grafana:8.2.6
@@ -234,8 +232,6 @@ services:
       - 6789:3000
     expose:
       - 3000
-    # networks:
-    #   - monitoring
 
 volumes:
   core_postgres:
