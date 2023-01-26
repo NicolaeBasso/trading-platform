@@ -4,3 +4,11 @@ scrape_configs:
   - job_name: "core-service"
     static_configs:
       - targets: ["core-service:5001"]
+
+  - job_name: 'Flask-Gateway'
+
+    dns_sd_configs:
+      - names: ['gateway']
+        port: 5555
+        type: A
+        refresh_interval: 5s
