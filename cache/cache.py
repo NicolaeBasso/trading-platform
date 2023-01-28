@@ -120,7 +120,7 @@ def historical_price(epic='BTCUSD', resolution='WEEK', max='1000'):
 
 def update_cache():    
     if r.exists('BTCUSD'):
-        print('key exists')
+        print('key exists', flush=True)
     else: r.json().set('BTCUSD', Path.root_path(),  dict())
     
     for res in ['MINUTE', 'MINUTE_5', 'MINUTE_15', 'MINUTE_30', 'HOUR', 'HOUR_4', 'DAY', 'WEEK']:
@@ -133,14 +133,16 @@ cache = flask.Flask(__name__)
 def btcusd(interval):
     print('get received', flush=True)
     if interval == 'ALL':
-        data = r.json().get('BTCUSD')
         print(interval, flush=True)
         print('if get', flush=True)
+
+        data = r.json().get('BTCUSD')
         return flask.jsonify(data)
     else:
-        data = r.json().get('BTCUSD', f'$.{interval}')
         print(interval, flush=True)
         print('else get', flush=True)
+
+        data = r.json().get('BTCUSD', f'$.{interval}')
         return flask.jsonify(data)
 
 
