@@ -6,6 +6,10 @@ import json
 
 from prometheus_flask_exporter import PrometheusMetrics
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logging.info("Setting LOGLEVEL to INFO")
+
 
 # Valid registry names:
 '''
@@ -27,6 +31,7 @@ DISCOVERY = '127.0.0.1:6666'
 
 gw = flask.Flask(__name__)
 metrics = PrometheusMetrics(gw)
+metrics.info("app_info", "Flask reverse proxy gateway", version="4.2.0")
 # /metrics endpoint
 
 @gw.post('/auth/register')
@@ -79,20 +84,15 @@ def ticker(ticker):
 
         endpoint = f"http://py-cache:6380/BTCUSD/{ticker}"
         
-
-        resp = requests.get(endpoint, headers=flask.request.headers)
-
-        # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
-        # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
-        # response = flask.Response(response=resp.content, status=resp.status_code, headers=headers)
-
-        # excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
-        # headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        print('log1', flush=True)
+        resp = requests.get(endpoint)
+ 
+        print('log2', flush=True)
         response = flask.Response(response=resp.content, status=resp.status_code)
-
-        # print(response.decode('utf-8'), flush=True)
-
+        
+        print('log3', flush=True)
         return response
+
     except:
         return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})   
 
