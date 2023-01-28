@@ -23,9 +23,10 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
-
+### Node.js framework - NestJS:
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+### Python framework:
+https://flask.palletsprojects.com/en/2.2.x/
 ## Installation
 
 ```bash
@@ -57,7 +58,7 @@ docker-compose up -d --build
 
 npx prisma migrate dev --name <name-of-new-migration>
 
-#### Migrate:
+#### Migrate (run on host or in docker container for docker setup):
 
 npx prisma migrate dev
 
@@ -75,7 +76,9 @@ $ npm run test:cov
 ```
 
 ## Documentation (Swagger OpenAPI)
-
+### Auth service:
+localhost:5001/api
+### Core service:
 localhost:5002/api
 
 ## Support

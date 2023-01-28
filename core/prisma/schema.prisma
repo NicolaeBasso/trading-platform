@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+  // binaryTargets = ["linux-arm64-openssl-1.1.x"]
+  // binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CORE_SERVICE_DATABASE_URL")
+}
+model Trade {
+  id String @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  type TradeType? @default(CFD) 
+  isOpen Boolean @default(false)
+  pair String @default("BTC/USD")
+  leverageRatio Int @default(1)
+  marginSize Float?
+  leverageSize Float?
+  tradeSize Float @default(1)
+  priceOpened Float  
+  priceClosed Float?
+  overnightInterest Float @default(0.1)
+  overnightFee Float?
+}
+
+enum TradeType {
+  CFD
+  OPTION
+  STOCK
+}
