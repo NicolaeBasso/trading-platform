@@ -11,31 +11,31 @@ export default class TradesSearchService {
     private readonly elasticsearchService: ElasticsearchService
   ) { }
 
-  async indexTrade(trade: Trade) {
-    return this.elasticsearchService.index<TradeSearchResult, TradeSearchBody>({
-      index: this.index,
-      body: {
-        id: trade.id,
-        type: trade.type,
-        isOpen: trade.isOpen,
-        tradeSize: trade.tradeSize
-      }
-    })
-  }
+  // async indexTrade(trade: Trade) {
+  //   return this.elasticsearchService.index<TradeSearchResult, TradeSearchBody>({
+  //     index: this.index,
+  //     body: {
+  //       id: trade.id,
+  //       type: trade.type,
+  //       isOpen: trade.isOpen,
+  //       tradeSize: trade.tradeSize
+  //     }
+  //   })
+  // }
 
-  async search(text: string) {
-    const { body } = await this.elasticsearchService.search<TradeSearchResult>({
-      index: this.index,
-      body: {
-        query: {
-          multi_match: {
-            query: text,
-            fields: ['type', 'isOpen']
-          }
-        }
-      }
-    })
-    const hits = body.hits.hits;
-    return hits.map((item) => item._source);
-  }
+  // async search(text: string) {
+  //   const { body } = await this.elasticsearchService.search<TradeSearchResult>({
+  //     index: this.index,
+  //     body: {
+  //       query: {
+  //         multi_match: {
+  //           query: text,
+  //           fields: ['type', 'isOpen']
+  //         }
+  //       }
+  //     }
+  //   })
+  //   const hits = body.hits.hits;
+  //   return hits.map((item) => item._source);
+  // }
 }
