@@ -1,12 +1,14 @@
 global:
   scrape_interval: 5s
 scrape_configs:
-  - job_name: "Core service"
+  - job_name: "core-service"
     static_configs:
       - targets: ["core-service:5001"]
-  - job_name: 'Gateway'
-dns_sd_configs:
-  - names: ['gateway']
-    port: 5555
-    type: A
-    refresh_interval: 5s
+
+  - job_name: 'Flask-Gateway'
+
+    dns_sd_configs:
+      - names: ['gateway']
+        port: 5555
+        type: A
+        refresh_interval: 5s
