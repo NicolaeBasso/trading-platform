@@ -152,4 +152,4 @@ if __name__ == '__main__':
     sleep(5)
     update_cache()
 
-    cache.run(host='localhost', port=6380)
+    cache.run(host='0.0.0.0', port=6380)
