@@ -23,7 +23,7 @@ metrics.info("app_info", "Flask reverse proxy gateway", version="4.2.0")
 @gw.post('/auth/register')
 def register():
     try:
-        endpoint = "http://auth-service:5002/register"
+        endpoint = "http://auth-service:5002/auth/register"
 
         print(flask.request.json, flush=True)
         
@@ -39,7 +39,7 @@ def register():
 @gw.post('/auth/login')
 def login():
     try:
-        endpoint = f"http://auth-service:5002/login"
+        endpoint = f"http://auth-service:5002/auth/login"
         
         resp = requests.post(endpoint, data=json.dumps(flask.request.json), headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
@@ -52,7 +52,7 @@ def login():
 @gw.get('/auth/logout')
 def logout():
     try:
-        endpoint = f"http://auth-service:5002/login"
+        endpoint = f"http://auth-service:5002/auth/logout"
         
         resp = requests.get(endpoint, headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
