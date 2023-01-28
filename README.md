@@ -77,9 +77,9 @@ $ npm run test:cov
 
 ## Documentation (Swagger OpenAPI)
 ### Auth service:
-localhost:5001/api
+localhost:5000/api
 ### Core service:
-localhost:5002/api
+localhost:5100/api
 
 ## Support
 

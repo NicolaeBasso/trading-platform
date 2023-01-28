@@ -22,23 +22,24 @@ export class HealthController {
     private memoryHealthIndicator: MemoryHealthIndicator,
     private diskHealthIndicator: DiskHealthIndicator,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap(): Promise<any> {
-    const port = +this.configService.get<string>('AUTH_SERVICE_PORT');
+    const nodeConf = {
+      ip: `${this.configService.get<string>('AUTH_SERVICE_CONTAINER_NAME')}`,
+      port: +this.configService.get<string>('AUTH_SERVICE_PORT'),
+      type: this.configService.get<string>('AUTH_SERVICE_APP_NAME')
+    }
+
+    console.log('Sent node conf = ', nodeConf);
 
     try {
       const res = await axios.post(
         `${this.configService.get<string>('DISCOVERY_URL')}/update`,
-        {
-          type: this.configService.get<string>('AUTH_SERVICE_APP_NAME'),
-          ip: `${this.configService.get<string>(
-            'AUTH_SERVICE_CONTAINER_NAME',
-          )}`,
-          port,
-        },
+        nodeConf
       );
-      console.log(res.data);
+
+      console.log('DISCOVERY_RESPONSE = ', res.data);
     } catch (err) {
       // throw new HttpException(
       //   'Failed communicating with Discovery Service!',

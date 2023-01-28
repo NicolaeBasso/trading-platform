@@ -23,7 +23,7 @@ metrics.info("app_info", "Flask reverse proxy gateway", version="4.2.0")
 @gw.post('/auth/register')
 def register():
     try:
-        endpoint = "http://auth-service:5002/auth/register"
+        endpoint = "http://auth:5100/auth/register"
 
         print(flask.request.json, flush=True)
         
@@ -39,7 +39,7 @@ def register():
 @gw.post('/auth/login')
 def login():
     try:
-        endpoint = f"http://auth-service:5002/auth/login"
+        endpoint = f"http://auth:5100/auth/login"
         
         resp = requests.post(endpoint, data=json.dumps(flask.request.json), headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
@@ -52,7 +52,7 @@ def login():
 @gw.get('/auth/logout')
 def logout():
     try:
-        endpoint = f"http://auth-service:5002/auth/logout"
+        endpoint = f"http://auth:5100/auth/logout"
         
         resp = requests.get(endpoint, headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
@@ -68,7 +68,7 @@ def ticker(ticker):
     try:                
         # print(f"/ticker/{ticker}", flush=True)
 
-        endpoint = f"http://py-cache:6380/BTCUSD/{ticker}"
+        endpoint = f"http://cache:6380/BTCUSD/{ticker}"
         
         print('log1', flush=True)
         resp = requests.get(endpoint)

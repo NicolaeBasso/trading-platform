@@ -1,47 +1,70 @@
 version: '3.8'
 
 services:
-  core:
-    container_name: core-service
-    image: core-service
+  core01:
+    image: core
+    container_name: core01
     build:
       context: ./core
     env_file:
       - ./core/.env
+    environment:
+      CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_1}
+      CORE_SERVICE_CONTAINER_NAME: "core01"
     volumes:
       - ./core:/app
-    # command: npm run migrate:dev
     depends_on:
-      - discovery_service
-      - user-postgres-server
-      - core-postgres-server
+      - discovery
+      - user-postgres
+      - core-postgres
     expose:
-      - ${CORE_SERVICE_PORT}
+      - ${CORE_SERVICE_PORT_1}
     ports:
-      - ${CORE_SERVICE_PORT}:${CORE_SERVICE_PORT}
+      - ${CORE_SERVICE_PORT_1}:${CORE_SERVICE_PORT_1}
+    restart: always
+
+  core02:
+    image: core
+    container_name: core02
+    build:
+      context: ./core
+    env_file:
+      - ./core/.env
+    environment:
+      CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_2}
+      CORE_SERVICE_CONTAINER_NAME: "core02"
+    volumes:
+      - ./core:/app
+    depends_on:
+      - discovery
+      - user-postgres
+      - core-postgres
+    expose:
+      - ${CORE_SERVICE_PORT_2}
+    ports:
+      - ${CORE_SERVICE_PORT_2}:${CORE_SERVICE_PORT_2}
     restart: always
 
   auth:
-    container_name: auth-service
-    image: auth-service
+    image: auth
+    container_name: auth
     build:
       context: ./auth
     env_file:
       - ./auth/.env
     volumes:
       - ./auth:/app
-    # command: npm run migrate:dev
     depends_on:
-      - discovery_service
-      - user-postgres-server
+      - discovery
+      - user-postgres
     expose:
       - ${AUTH_SERVICE_PORT}
     ports:
       - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
     restart: always
 
-  core-postgres-server:
-    container_name: core-postgres-server
+  core-postgres:
+    container_name: core-postgres
     image: postgres
     env_file:
     - ./core/.env
@@ -58,8 +81,8 @@ services:
       - 5433:5432
     restart: unless-stopped
 
-  user-postgres-server:
-    container_name: user-postgres-server
+  user-postgres:
+    container_name: user-postgres
     image: postgres
     env_file:
     - ./auth/.env
@@ -77,8 +100,8 @@ services:
     restart: unless-stopped
 
   gateway:
+    image: gateway
     container_name: gateway
-    image: gateway-service
     build:
       context: ./gateway
     expose:
@@ -87,9 +110,9 @@ services:
       - 5555:5555
     restart: unless-stopped
 
-  discovery_service:
+  discovery:
+    image: discovery
     container_name: discovery
-    image: discovery-service
     build:
       context: ./discovery
     depends_on:
@@ -99,7 +122,6 @@ services:
     ports:
       - 6666:6666
     restart: unless-stopped
-
 
   redis-master:
     container_name: redis-master
@@ -134,9 +156,9 @@ services:
       - redis-master
       - redis-slave
 
-  py-cache:
-    container_name: py-cache
-    image: py-cache
+  cache:
+    image: cache
+    container_name: cache
     build:
       context: ./cache
     depends_on:
@@ -206,8 +228,9 @@ services:
       - elastic
 
   prometheus:
-    image: prom/prometheus:v2.20.1
+    image: prometheus
     container_name: prometheus
+    image: prom/prometheus:v2.20.1
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus_data:/prometheus
@@ -217,8 +240,9 @@ services:
       - 9090
 
   grafana:
-    image: grafana/grafana:8.2.6
+    image: grafana
     container_name: grafana
+    image: grafana/grafana:8.2.6
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -234,8 +258,8 @@ services:
 volumes:
   core_postgres:
   user_postgres:
-  prometheus_data: {}
-  grafana_data: {}
+  prometheus_data: 
+  grafana_data:
   data01:
     driver: local
   data02:
