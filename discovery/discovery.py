@@ -5,10 +5,6 @@ from time import sleep
 
 DISCOVERY_REGISTRY = {}
 
-DISCOVERY_IP = '0.0.0.0'
-DISCOVERY_PORT = 6666
-
-
 app = flask.Flask(__name__)
 
 
@@ -67,4 +63,4 @@ if __name__ == '__main__':
     check_thread = threading.Thread(target=check)
     check_thread.start()
 
-    app.run(host=DISCOVERY_IP, port=DISCOVERY_PORT)
+    app.run(host='0.0.0.0', port=6666)

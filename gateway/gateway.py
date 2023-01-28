@@ -11,21 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logging.info("Setting LOGLEVEL to INFO")
 
 
-# Valid registry names:
-'''
-discovery_service
-core_service
-auth_service
-cache_db
-nosql_db
-sql_db
-'''
-
-
 GATEWAY_REGISTRY = {}
-
-GATEWAY_IP = '0.0.0.0'
-GATEWAY_PORT = 5555
 
 DISCOVERY = '127.0.0.1:6666'
 
@@ -129,4 +115,4 @@ if __name__ == '__main__':
     # update_thread = threading.Thread(target=update)
     # update_thread.start()
 
-    gw.run(host=GATEWAY_IP, port=GATEWAY_PORT)
+    gw.run(host='0.0.0.0', port=5555)
