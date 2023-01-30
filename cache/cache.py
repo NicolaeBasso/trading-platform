@@ -4,6 +4,7 @@ from time import sleep
 from threading import Thread
 import redis, flask
 from redis.commands.json.path import Path
+from redis.sentinel import Sentinel
 import datetime
 
 
@@ -12,7 +13,22 @@ session_headers = {
     'CST': None
 }
 
-r = redis.Redis(host='redis-master', port=6379, db=0)
+r = redis.Redis(host='redis-master', port=6379, db=0, password='redis')
+
+
+def update_redis_ip():
+    while True:
+        global r
+        sleep(10)
+        try:
+            sentinel = Sentinel([('sentinel', 26379)], sentinel_kwargs={'password': 'redis'})
+            host, port = sentinel.discover_master('redis-master')
+            r = redis.Redis(host=host, port=port, db=0, password='redis')
+        except:
+            print('update_redis_ip throw', flush=True)
+update = Thread(target=update_redis_ip)
+update.start()
+            
 
 
 def create_session():

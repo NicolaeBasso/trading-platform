@@ -126,6 +126,7 @@ services:
   redis-master:
     container_name: redis-master
     image: redislabs/rejson
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --requirepass redis
     expose:
       - 6379
     ports:
@@ -134,7 +135,7 @@ services:
   redis-slave:
     container_name: redis-slave
     image: redislabs/rejson
-    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --slaveof redis-master 6379
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --slaveof redis-master 6379 --masterauth redis
     links:
       - redis-master
 
@@ -144,7 +145,8 @@ services:
     command: >
       bash -c "echo 'port 26379' > sentinel.conf &&
       echo 'dir /tmp' >> sentinel.conf &&
-      echo 'sentinel monitor redis-master redis-master 6379 2' >> sentinel.conf &&
+      echo 'sentinel monitor redis-master redis-master 6379 1' >> sentinel.conf &&
+      echo 'sentinel auth-pass redis-master redis' >> sentinel.conf &&
       echo 'sentinel down-after-milliseconds redis-master 5000' >> sentinel.conf &&
       echo 'sentinel parallel-syncs redis-master 1' >> sentinel.conf &&
       echo 'sentinel failover-timeout redis-master 5000' >> sentinel.conf &&
@@ -155,10 +157,14 @@ services:
     links:
       - redis-master
       - redis-slave
+    expose:
+      - 26379
+    ports:
+      - 26379:26379
 
-  cache:
-    image: cache
-    container_name: cache
+  py-cache:
+    image: py-cache
+    container_name: py-cache
     build:
       context: ./cache
     depends_on:
@@ -166,7 +172,7 @@ services:
     expose:
       - 6380
     ports:
-      - 6380:6380  
+      - 6380:6380 
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
