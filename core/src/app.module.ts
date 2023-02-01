@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ThrottlerModule } from "@nestjs/throttler";
 import { LoggingInterceptor } from './utils/interceptors/logging.interceptor';
 import { HealthModule } from './health/health.module';
 import { TradeModule } from './trade/trade.module';
@@ -32,13 +33,17 @@ import { UserModule } from './user/user.module';
     AuthModule,
     DBAdapterModule,
     UserModule,
+    ThrottlerModule.forRoot({
+      ttl: 5,
+      limit: 5,
+    }),
   ],
   providers: [
     TradeService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: LoggingInterceptor,
+    // },
   ],
 })
 export class AppModule {}

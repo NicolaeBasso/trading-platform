@@ -9,6 +9,7 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from "@nestjs/throttler";
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
@@ -55,8 +56,9 @@ export class TradeController {
   }
 
   @Delete('/removeAll')
-  @RolesDecorator(Roles.ADMIN)
-  // @UseGuards(RolesGuard)
+  // @RolesDecorator(Roles.ADMIN)
+  @UseGuards(RolesGuard)
+  // @Throttle(10, 1)
   removeAll() {
     return this.tradeService.removeAll();
   }

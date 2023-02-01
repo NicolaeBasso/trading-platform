@@ -33,7 +33,7 @@ export class UserController {
 
   @Delete('/removeAll')
   @RolesDecorator(Roles.ADMIN)
-  // @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   removeAll() {
     return this.userService.removeAllUserData();
   }
