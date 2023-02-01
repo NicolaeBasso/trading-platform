@@ -4,10 +4,20 @@ import { UpdateTradeDto } from './dto/update-trade.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Trade } from './entities/trade.entity';
+import { DBAdapterService } from 'src/db-adapter/db-adapter.service';
+import { Model } from 'mongoose';
+import { User } from 'src/db-adapter/entities/mongodb/user.entity';
 
 @Injectable()
 export class TradeService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly dbAdapter: DBAdapterService,
+  ) {}
+
+  private readonly mongodb: Model<User> & any = this.dbAdapter.db('mongodb');
+  private readonly corePrisma: PrismaService & any = this.dbAdapter.db('corePostgres');
 
   async create(createTradeDto: CreateTradeDto) {
     const { pair, tradeSize } = createTradeDto;
@@ -27,7 +37,8 @@ export class TradeService {
   }
 
   async findAll(): Promise<Trade[] & any> {
-    return this.prisma.trade.findMany();
+    // return this.prisma.trade.findMany();
+    return this.corePrisma.trade.findMany();
   }
 
   findOne(id: string) {

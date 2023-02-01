@@ -30,11 +30,7 @@ export class TradeController {
   }
 
   @Get('all')
-
   findAll() {
-    // console.log('findAll!');
-    console.log('New!');
-    // return [];
     return this.tradeService.findAll();
   }
 
@@ -60,7 +56,7 @@ export class TradeController {
 
   @Delete('/removeAll')
   @RolesDecorator(Roles.ADMIN)
-  @UseGuards(RolesGuard)
+  // @UseGuards(RolesGuard)
   removeAll() {
     return this.tradeService.removeAll();
   }

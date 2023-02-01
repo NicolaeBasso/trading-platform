@@ -99,6 +99,18 @@ services:
       - 5434:5432
     restart: unless-stopped
 
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    restart: unless-stopped
+    expose:
+      - 27017
+    ports:
+      - 24333:27017
+    volumes:
+      - .mongodb:/data
+
+
   gateway:
     image: gateway
     container_name: gateway
