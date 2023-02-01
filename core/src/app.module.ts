@@ -18,7 +18,7 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: process.env.ENV === 'DOCKER_DEV' ? 'dev.docker.env': '.env',
       isGlobal: true,
     }),
     PrometheusModule.register({

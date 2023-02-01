@@ -12,7 +12,7 @@ import { HealthModule } from './health/health.module';
     UsersModule,
     HealthModule,
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: process.env.ENV === 'DOCKER_DEV' ? 'dev.docker.env': '.env',
       isGlobal: true,
     }),
   ],
