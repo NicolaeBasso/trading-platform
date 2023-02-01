@@ -9,9 +9,9 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/utils/constants';
-import { RolesDecorator } from 'src/utils/decorators/roles.decorator';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { Roles } from '../utils/constants';
+import { RolesDecorator } from '../utils/decorators/roles.decorator';
+import { RolesGuard } from '../utils/guards/roles.guard';
 import { UserService } from './user.service';
 
 @Controller('user')

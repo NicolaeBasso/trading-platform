@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Trade } from './entities/trade.entity';
-import { DBAdapterService } from 'src/db-adapter/db-adapter.service';
+import { DBAdapterService } from '../db-adapter/db-adapter.service';
 import { Model } from 'mongoose';
-import { User } from 'src/db-adapter/entities/mongodb/user.entity';
+import { User } from '../db-adapter/entities/mongodb/user.entity';
 
 @Injectable()
 export class TradeService {

@@ -7,7 +7,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { jwtSecret } from 'src/utils/constants';
+import { jwtSecret } from '../utils/constants';
 import { Request, Response } from 'express';
 
 @Injectable()

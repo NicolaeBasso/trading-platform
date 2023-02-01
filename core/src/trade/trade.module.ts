@@ -6,7 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { DBAdapterModule } from '../db-adapter/adapter.module';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { RolesGuard } from '../utils/guards/roles.guard';
 
 @Module({
   imports: [JwtModule, PassportModule, DBAdapterModule],

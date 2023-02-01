@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { DBAdapterModule } from 'src/db-adapter/adapter.module';
+import { DBAdapterModule } from '../db-adapter/adapter.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 

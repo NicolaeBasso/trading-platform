@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DBAdapterService } from 'src/db-adapter/db-adapter.service';
+import { DBAdapterService } from '../db-adapter/db-adapter.service';
 import { Model } from 'mongoose';
-import { User } from 'src/db-adapter/entities/mongodb/user.entity';
+import { User } from '../db-adapter/entities/mongodb/user.entity';
 
 @Injectable()
 export class UserService {
