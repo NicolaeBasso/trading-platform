@@ -13,6 +13,10 @@ def update():
     global DISCOVERY_REGISTRY
     request = flask.request.json
     if request['type'] in DISCOVERY_REGISTRY.keys():
+        for d in DISCOVERY_REGISTRY[request['type']]:
+            if d == {'ip':request['ip'], 'port':request['port']}: # means we received a duplicate
+                return flask.jsonify({"status": "received a duplicate"})
+        # otherwise append ip/port to registry
         DISCOVERY_REGISTRY[request['type']].append({'ip':request['ip'], 'port':request['port']})
     else:
         DISCOVERY_REGISTRY[request['type']] = [{'ip':request['ip'], 'port':request['port']}]
