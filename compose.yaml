@@ -21,7 +21,7 @@ services:
       - ${CORE_SERVICE_PORT_1}
     ports:
       - ${CORE_SERVICE_PORT_1}:${CORE_SERVICE_PORT_1}
-    restart: always
+    restart: unless-stopped
 
   core02:
     image: core
@@ -43,7 +43,7 @@ services:
       - ${CORE_SERVICE_PORT_2}
     ports:
       - ${CORE_SERVICE_PORT_2}:${CORE_SERVICE_PORT_2}
-    restart: always
+    restart: unless-stopped
 
   auth:
     image: auth
@@ -61,7 +61,7 @@ services:
       - ${AUTH_SERVICE_PORT}
     ports:
       - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
-    restart: always
+    restart: unless-stopped
 
   core-postgres:
     container_name: core-postgres
@@ -102,14 +102,13 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo
-    restart: unless-stopped
     expose:
       - 27017
     ports:
       - 24333:27017
     volumes:
       - .mongodb:/data
-
+    restart: unless-stopped
 
   gateway:
     image: gateway
@@ -211,6 +210,7 @@ services:
       - 9200:9200
     networks:
       - elastic
+    restart: on-failure
 
   es02:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
@@ -230,6 +230,7 @@ services:
       - data02:/usr/share/elasticsearch/data
     networks:
       - elastic
+    restart: on-failure
 
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
@@ -249,6 +250,7 @@ services:
       - data03:/usr/share/elasticsearch/data
     networks:
       - elastic
+    restart: on-failure
 
   prometheus:
     image: prometheus
@@ -261,6 +263,7 @@ services:
       - 9090:9090
     expose:
       - 9090
+    restart: unless-stopped
 
   grafana:
     image: grafana
@@ -277,6 +280,7 @@ services:
       - 6789:3000
     expose:
       - 3000
+    restart: unless-stopped
 
 volumes:
   core_postgres:
