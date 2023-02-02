@@ -143,6 +143,7 @@ services:
       - 6379
     ports:
       - 6379:6379
+    restart: unless-stopped
       
   redis-slave:
     container_name: redis-slave
@@ -150,6 +151,7 @@ services:
     command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --slaveof redis-master 6379 --masterauth redis
     links:
       - redis-master
+    restart: unless-stopped
 
   sentinel:
     container_name: sentinel
@@ -173,6 +175,7 @@ services:
       - 26379
     ports:
       - 26379:26379
+    restart: unless-stopped
 
   py-cache:
     image: py-cache
@@ -181,10 +184,12 @@ services:
       context: ./cache
     depends_on:
       - redis-master
+      - sentinel
     expose:
       - 6380
     ports:
       - 6380:6380 
+    restart: unless-stopped
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
