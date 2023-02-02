@@ -57,6 +57,16 @@ def create_session():
         ping_session(TOKEN, CST)
 
 
+# ping_session(token, cst);
+# ping_session({token, cst});
+# redis.send({host, port, db, password})
+
+# cache({operation: "send", host, port, db, password})
+
+# def cache(options):
+    # redis[operation](host=host, port=port, db=db, password=password)
+    # redis[operation]() should be same as redis.send()
+
 def ping_session(TOKEN, CST):
     endpoint = 'https://demo-api-capital.backend-capital.com/api/v1/ping'
     headers = {
