@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, Role } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { jwtSecret } from '../utils/constants';
@@ -15,7 +15,7 @@ export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
   async register(dto: AuthDto) {
-    const { email, password } = dto;
+    const { email, password, role = Role.USER } = dto;
 
     const userExists = await this.prisma.user.findUnique({
       where: { email },
@@ -31,6 +31,7 @@ export class AuthService {
       data: {
         email,
         hashedPassword,
+        role
       },
     });
 
@@ -62,6 +63,7 @@ export class AuthService {
     const token = await this.signToken({
       userId: foundUser.id,
       email: foundUser.email,
+      role: foundUser.role
     });
 
     if (!token) {
@@ -71,6 +73,12 @@ export class AuthService {
     res.cookie('token', token, {});
 
     return res.send({ message: 'Logged in succefully' });
+  }
+
+  async removeAllUsers(res: Response) {
+    await this.prisma.user.deleteMany({});
+
+    return res.send({ message: 'All users deleted' });
   }
 
   async logout(req: Request, res: Response) {
@@ -89,10 +97,11 @@ export class AuthService {
     return await bcrypt.compare(args.password, args.hash);
   }
 
-  async signToken(args: { userId: string; email: string }) {
+  async signToken(args: { userId: string; email: string; role: string }) {
     const payload = {
       id: args.userId,
       email: args.email,
+      role: args.role
     };
 
     const token = await this.jwt.signAsync(payload, {

@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
+import { Body, Controller, Get, Post, Delete, Request, Response } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, Role } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -8,7 +8,13 @@ export class AuthController {
 
   @Post('register')
   register(@Body() dto: AuthDto) {
-    return this.authService.register(dto);
+    const {email, password} = dto;
+    return this.authService.register({email, password, role: Role.USER});
+  }
+
+  @Post('registerAdmin')
+  registerAdmin(@Body() dto: AuthDto) {
+    return this.authService.register({...dto, role: Role.ADMIN});
   }
 
   @Post('login')
@@ -20,5 +26,11 @@ export class AuthController {
   logout(@Request() req, @Response() res) {
     console.log('Logout!');
     return this.authService.logout(req, res);
+  }
+
+  @Delete('removeAll')
+  removeAllUsers(@Response() res) {
+    console.log('Logout!');
+    return this.authService.removeAllUsers(res);
   }
 }

@@ -31,9 +31,9 @@ export class UserController {
     return this.userService.createUserData(createUserDataDto);
   }
 
-  @Delete('/removeAll')
-  @RolesDecorator(Roles.ADMIN)
   @UseGuards(RolesGuard)
+  @RolesDecorator(Roles.ADMIN)
+  @Delete('/removeAll')
   removeAll() {
     return this.userService.removeAllUserData();
   }

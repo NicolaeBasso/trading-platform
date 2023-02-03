@@ -11,6 +11,7 @@ services:
     environment:
       CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_1}
       CORE_SERVICE_CONTAINER_NAME: "core01"
+      MONGODB_URI: "mongodb://mongo1:27017/mongodb"
     volumes:
       - ./core:/app
     depends_on:
@@ -33,6 +34,7 @@ services:
     environment:
       CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_2}
       CORE_SERVICE_CONTAINER_NAME: "core02"
+      MONGODB_URI: "mongodb://mongo2:27017/mongodb"
     volumes:
       - ./core:/app
     depends_on:
@@ -99,16 +101,46 @@ services:
       - 5434:5432
     restart: unless-stopped
 
-  mongodb:
-    container_name: mongodb
-    image: mongo
-    expose:
-      - 27017
-    ports:
-      - 24333:27017
+###
+  mongo1:
+    container_name: mongo1
+    image: mongo:4.4
     volumes:
-      - .mongodb:/data
-    restart: unless-stopped
+      - ~/mongors/data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    ports:
+      - 27021:27017
+    expose:
+      - 21017
+    links:
+      - mongo2
+      - mongo3
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data2:/data/db
+    ports:
+      - 27022:27017
+    expose:
+      - 21017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data3:/data/db
+    ports:
+      - 27023:27017
+    expose:
+      - 21017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
   gateway:
     image: gateway
