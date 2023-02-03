@@ -99,59 +99,116 @@ services:
       - 5434:5432
     restart: unless-stopped
 
-  mongodb1:
-    # container_name: mongodb1
-    hostname: mongodb1
-    image: mongo
+  mongo1:
+    container_name: mongo1
+    # hostname: mongo
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    networks:
+      - mongors-network
+    ports:
+      - 27021:27017
     expose:
       - 27017
-    ports:
-      - 24333:27017
-    # volumes:
-    #   - .mongodb:/data
-    restart: unless-stopped
-    command: mongod --replSet mongo-set-1
+    links:
+      - mongo2
+      - mongo3
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
-  mongodb2:
-    # container_name: mongodb2
-    hostname: mongodb2
-    image: mongo
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data2:/data/db
+    networks:
+      - mongors-network
+    ports:
+      - 27022:27017
     expose:
       - 27017
-    ports:
-      - 24334:27017
-    # volumes:
-    #   - .mongodb:/data
-    restart: unless-stopped
-    command: mongod --replSet mongo-set-1
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
-  mongoinit:
-    # container_name: mongoinit
-    image: mongo
-    # this container will exit after executing the command
-    restart: "no"
-    depends_on:
-      - mongodb1
-      - mongodb2
-    command: >
-      mongo --host mongodb1:27017 --eval 
-      '
-      db = (new Mongo("localhost:27017")).getDB("user");
-      config = {
-      "_id" : "mongo-set-1",
-      "members" : [
-        {
-          "_id" : 0,
-          "host" : "mongodb1:27017"
-        },
-        {
-          "_id" : 1,
-          "host" : "mongodb2:27017"
-        }
-      ]
-      };
-      rs.initiate(config);
-      ' 
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data3:/data/db
+    networks:
+      - mongors-network
+    ports:
+      - 27023:27017
+    expose:
+      - 27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  # mongosetup:
+  #   container_name: mongosetup
+  #   image: mongo:4.2.8
+  #   depends_on:
+  #     - mongo1
+  #     - mongo2
+  #     - mongo3
+  #   restart: "no"
+  #   entrypoint: [ "bash", "-c", "sleep 10 && mongo --host mongo:27017 /scripts/rs-init.sh"]   
+
+  # mongodb1:
+  #   # container_name: mongodb1
+  #   hostname: mongodb1
+  #   image: mongo
+  #   expose:
+  #     - 27017
+  #   ports:
+  #     - 24333:27017
+  #   # volumes:
+  #   #   - .mongodb:/data
+  #   restart: unless-stopped
+  #   command: mongod --replSet mongo-set-1
+
+  # mongodb2:
+  #   # container_name: mongodb2
+  #   hostname: mongodb2
+  #   image: mongo
+  #   expose:
+  #     - 27017
+  #   ports:
+  #     - 24334:27017
+  #   # volumes:
+  #   #   - .mongodb:/data
+  #   restart: unless-stopped
+  #   command: mongod --replSet mongo-set-1
+
+  # mongoinit:
+  #   # container_name: mongoinit
+  #   image: mongo
+  #   # this container will exit after executing the command
+  #   restart: "no"
+  #   depends_on:
+  #     - mongodb1
+  #     - mongodb2
+  #   command: >
+  #     mongo --host mongodb1:27017 --eval 
+  #     '
+  #     db = (new Mongo("localhost:27017")).getDB("user");
+  #     config = {
+  #     "_id" : "mongo-set-1",
+  #     "members" : [
+  #       {
+  #         "_id" : 0,
+  #         "host" : "mongodb1:27017"
+  #       },
+  #       {
+  #         "_id" : 1,
+  #         "host" : "mongodb2:27017"
+  #       }
+  #     ]
+  #     };
+  #     rs.initiate(config);
+  #     ' 
 
   gateway:
     image: gateway
@@ -339,4 +396,6 @@ volumes:
 
 networks:
   elastic:
+    driver: bridge
+  mongors-network:
     driver: bridge
