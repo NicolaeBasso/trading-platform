@@ -5,6 +5,8 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { DBAdapterService } from './db-adapter.service';
 import { User, UserSchema } from './entities/mongodb/user.entity';
 
+console.log('URI = ', process.env.MONGODB_URI);
+
 @Module({
   imports: [
     PrismaModule,

@@ -99,16 +99,59 @@ services:
       - 5434:5432
     restart: unless-stopped
 
-  mongodb:
-    container_name: mongodb
+  mongodb1:
+    # container_name: mongodb1
+    hostname: mongodb1
     image: mongo
     expose:
       - 27017
     ports:
       - 24333:27017
-    volumes:
-      - .mongodb:/data
+    # volumes:
+    #   - .mongodb:/data
     restart: unless-stopped
+    command: mongod --replSet mongo-set-1
+
+  mongodb2:
+    # container_name: mongodb2
+    hostname: mongodb2
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 24334:27017
+    # volumes:
+    #   - .mongodb:/data
+    restart: unless-stopped
+    command: mongod --replSet mongo-set-1
+
+  mongoinit:
+    # container_name: mongoinit
+    image: mongo
+    # this container will exit after executing the command
+    restart: "no"
+    depends_on:
+      - mongodb1
+      - mongodb2
+    command: >
+      mongo --host mongodb1:27017 --eval 
+      '
+      db = (new Mongo("localhost:27017")).getDB("user");
+      config = {
+      "_id" : "mongo-set-1",
+      "members" : [
+        {
+          "_id" : 0,
+          "host" : "mongodb1:27017"
+        },
+        {
+          "_id" : 1,
+          "host" : "mongodb2:27017"
+        }
+      ]
+      };
+      rs.initiate(config);
+      ' 
 
   gateway:
     image: gateway
