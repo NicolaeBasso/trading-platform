@@ -169,7 +169,7 @@ services:
   redis-master:
     container_name: redis-master
     image: redislabs/rejson
-    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --requirepass redis
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --requirepass redis --masterauth redis
     expose:
       - 6379
     ports:
@@ -179,7 +179,7 @@ services:
   redis-slave:
     container_name: redis-slave
     image: redislabs/rejson
-    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --slaveof redis-master 6379 --masterauth redis
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --requirepass redis --slaveof redis-master 6379 --masterauth redis
     links:
       - redis-master
     restart: unless-stopped
