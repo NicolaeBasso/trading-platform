@@ -37,7 +37,12 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
+docker compose up -d --build mongo1 mongo2 mongo3
+# wait for mongo containers to finish starting, then:
+./startdb.sh
+# after shell script positive response, run all the other contaienrs with:
+docker compose up -d --build
+# $ npm run start
 
 # watch mode
 $ npm run start:dev

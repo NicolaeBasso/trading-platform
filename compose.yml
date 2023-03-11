@@ -11,6 +11,7 @@ services:
     environment:
       CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_1}
       CORE_SERVICE_CONTAINER_NAME: "core01"
+      MONGODB_URI: "mongodb://mongo1:27017/mongodb"
     volumes:
       - ./core:/app
     depends_on:
@@ -21,7 +22,7 @@ services:
       - ${CORE_SERVICE_PORT_1}
     ports:
       - ${CORE_SERVICE_PORT_1}:${CORE_SERVICE_PORT_1}
-    restart: always
+    restart: unless-stopped
 
   core02:
     image: core
@@ -33,6 +34,7 @@ services:
     environment:
       CORE_SERVICE_PORT: ${CORE_SERVICE_PORT_2}
       CORE_SERVICE_CONTAINER_NAME: "core02"
+      MONGODB_URI: "mongodb://mongo2:27017/mongodb"
     volumes:
       - ./core:/app
     depends_on:
@@ -43,7 +45,7 @@ services:
       - ${CORE_SERVICE_PORT_2}
     ports:
       - ${CORE_SERVICE_PORT_2}:${CORE_SERVICE_PORT_2}
-    restart: always
+    restart: unless-stopped
 
   auth:
     image: auth
@@ -61,7 +63,7 @@ services:
       - ${AUTH_SERVICE_PORT}
     ports:
       - ${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}
-    restart: always
+    restart: unless-stopped
 
   core-postgres:
     container_name: core-postgres
@@ -98,6 +100,46 @@ services:
     ports:
       - 5434:5432
     restart: unless-stopped
+    
+  mongo1:
+    container_name: mongo1
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    ports:
+      - 27021:27017
+    expose:
+      - 21017
+    links:
+      - mongo2
+      - mongo3
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data2:/data/db
+    ports:
+      - 27022:27017
+    expose:
+      - 21017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.4
+    volumes:
+      - ~/mongors/data3:/data/db
+    ports:
+      - 27023:27017
+    expose:
+      - 21017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
   gateway:
     image: gateway
@@ -199,6 +241,7 @@ services:
       - 9200:9200
     networks:
       - elastic
+    restart: on-failure
 
   es02:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
@@ -218,6 +261,7 @@ services:
       - data02:/usr/share/elasticsearch/data
     networks:
       - elastic
+    restart: on-failure
 
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
@@ -237,6 +281,7 @@ services:
       - data03:/usr/share/elasticsearch/data
     networks:
       - elastic
+    restart: on-failure
 
   prometheus:
     image: prometheus
@@ -249,6 +294,7 @@ services:
       - 9090:9090
     expose:
       - 9090
+    restart: unless-stopped
 
   grafana:
     image: grafana
@@ -265,6 +311,7 @@ services:
       - 6789:3000
     expose:
       - 3000
+    restart: unless-stopped
 
 volumes:
   core_postgres:

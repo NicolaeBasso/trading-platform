@@ -1,0 +1,820 @@
+{
+	"info": {
+		"_postman_id": "4242e50b-8223-4b79-a46a-3e8182ca4d5e",
+		"name": "Trading Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14020293"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Register USER",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5100/auth/register",
+									"host": [
+										"localhost"
+									],
+									"port": "5100",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register ADMIN",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@mail.com\",\n    \"password\": \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5100/auth/registerAdmin",
+									"host": [
+										"localhost"
+									],
+									"port": "5100",
+									"path": [
+										"auth",
+										"registerAdmin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login ADMIN",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@mail.com\",\n    \"password\": \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5100/auth/login",
+									"host": [
+										"localhost"
+									],
+									"port": "5100",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login USER",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5100/auth/login",
+									"host": [
+										"localhost"
+									],
+									"port": "5100",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Logout",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5100/auth/logout",
+									"host": [
+										"localhost"
+									],
+									"port": "5100",
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete all users",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "All users",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "localhost:5002/users",
+									"host": [
+										"localhost"
+									],
+									"port": "5002",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Discovery",
+			"item": [
+				{
+					"name": "update index",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"auth-service-nestjs\",\n    \"ip\": \"localhost\",\n    \"port\": 7667\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:6666/update",
+							"host": [
+								"localhost"
+							],
+							"port": "6666",
+							"path": [
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6666/index",
+							"host": [
+								"localhost"
+							],
+							"port": "6666",
+							"path": [
+								"index"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateway",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Logout",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5002/auth/logout",
+									"host": [
+										"localhost"
+									],
+									"port": "5002",
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test@maild.com\",\n    \"password\": \"test\",\n    \"role\": \"USER\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5002/auth/login",
+									"host": [
+										"localhost"
+									],
+									"port": "5002",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"test\",\n    \"role\": \"USER\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5555/auth/register",
+									"host": [
+										"localhost"
+									],
+									"port": "5555",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Discovery",
+					"item": [
+						{
+							"name": "test (discovery index)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5555/test",
+									"host": [
+										"localhost"
+									],
+									"port": "5555",
+									"path": [
+										"test"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cache",
+					"item": [
+						{
+							"name": "ALL Data",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5555/BTCUSD/ALL",
+									"host": [
+										"localhost"
+									],
+									"port": "5555",
+									"path": [
+										"BTCUSD",
+										"ALL"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Timeframe",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5555/BTCUSD/WEEK",
+									"host": [
+										"localhost"
+									],
+									"port": "5555",
+									"path": [
+										"BTCUSD",
+										"WEEK"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Cache",
+			"item": [
+				{
+					"name": "get btc data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6380/BTCUSD/ALL",
+							"host": [
+								"localhost"
+							],
+							"port": "6380",
+							"path": [
+								"BTCUSD",
+								"ALL"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get last 1k week tickers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:6380/BTCUSD/WEEK",
+							"host": [
+								"localhost"
+							],
+							"port": "6380",
+							"path": [
+								"BTCUSD",
+								"WEEK"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Core",
+			"item": [
+				{
+					"name": "Metrics",
+					"item": [
+						{
+							"name": "Default",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/metrics",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"metrics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "prometheus-service",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:9090/metrics",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "9090",
+									"path": [
+										"metrics"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Trades",
+					"item": [
+						{
+							"name": "All trades",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/trade/all",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Open trade",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"pair\": \"XTC/USD\",\n   \"tradeSize\": 33,\n   \"isOpen\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5001/trade",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update trade",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"pair\": \"EUR/USD\",\n   \"tradeSize\": 335\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5001/trade/update/4499fe51-0822-4869-8b93-f1c640565f7a",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade",
+										"update",
+										"4499fe51-0822-4869-8b93-f1c640565f7a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Close trade",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/trade/close/15bcac42-6d24-446f-9bf6-14df0e465d68",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade",
+										"close",
+										"15bcac42-6d24-446f-9bf6-14df0e465d68"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete trade",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/trade/remove/54d4af58-c93a4-4787-af4d-3a9bcecf2535",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade",
+										"remove",
+										"54d4af58-c93a4-4787-af4d-3a9bcecf2535"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete all trades",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/trade/removeAll",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"trade",
+										"removeAll"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Health",
+					"item": [
+						{
+							"name": "Health",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/health",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"health"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Get all user mongodb data",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5001/user/config/all",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"user",
+										"config",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user config",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"234\",\n    \"data\": {\n        \"license\": \"NBRB\",\n        \"theme\": \"dark\",\n        \"xoxo\": null\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5001/user/config",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"user",
+										"config"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete all user configs",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZTk1YzU3LWMxYzQtNDM0MC05ZGQ1LWFmNWQxNzU2MjQzMCIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE2NzU0NjIxOTd9._viqqpS7oCbS9hPFKLlo2MEFUA9YGzMmKh_LOgqAKX8",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:5001/user/removeAll",
+									"host": [
+										"localhost"
+									],
+									"port": "5001",
+									"path": [
+										"user",
+										"removeAll"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Capital.com",
+			"item": [
+				{
+					"name": "Create new seesion (basic password)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CAP-API-KEY",
+								"value": "qUBPe2IICLeKIkKD",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"waffle4everyone@gmail.com\",\n  \"password\": \"vrewth3V!!*&F,,\",\n  \"encryptedPassword\": \"false\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://demo-api-capital.backend-capital.com/api/v1/session",
+							"protocol": "https",
+							"host": [
+								"demo-api-capital",
+								"backend-capital",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "historical prices",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "CST",
+								"value": "HO18i9C4Y55J2AJVnFgDQrqJ",
+								"type": "text"
+							},
+							{
+								"key": "X-SECURITY-TOKEN",
+								"value": "3Q6uJTclcSoGFOtMMicRYmR1oqU0gS1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://demo-api-capital.backend-capital.com/api/v1/prices/NATURALGAS?resolution=MINUTE&max=10&from=2022-02-24T00:00:00&to=2022-02-24T01:00:00",
+							"protocol": "https",
+							"host": [
+								"demo-api-capital",
+								"backend-capital",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"prices",
+								"NATURALGAS"
+							],
+							"query": [
+								{
+									"key": "resolution",
+									"value": "MINUTE"
+								},
+								{
+									"key": "max",
+									"value": "10"
+								},
+								{
+									"key": "from",
+									"value": "2022-02-24T00:00:00"
+								},
+								{
+									"key": "to",
+									"value": "2022-02-24T01:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
