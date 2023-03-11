@@ -23,9 +23,9 @@ metrics.info("app_info", "Flask reverse proxy gateway", version="4.2.0")
 @gw.post('/auth/register')
 def register():
     try:
-        endpoint = "http://auth:5100/auth/register"
-
-        print(flask.request.json, flush=True)
+        ip = GATEWAY_REGISTRY['auth-service'][0]['ip']
+        port = GATEWAY_REGISTRY['auth-service'][0]['port']
+        endpoint = f"http://{ip}:{port}/auth/register"
         
         resp = requests.post(endpoint, data=json.dumps(flask.request.json), headers=flask.request.headers)
 
@@ -39,7 +39,9 @@ def register():
 @gw.post('/auth/login')
 def login():
     try:
-        endpoint = f"http://auth:5100/auth/login"
+        ip = GATEWAY_REGISTRY['auth-service'][0]['ip']
+        port = GATEWAY_REGISTRY['auth-service'][0]['port']
+        endpoint = f"http://{ip}:{port}/auth/login"
         
         resp = requests.post(endpoint, data=json.dumps(flask.request.json), headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
@@ -52,7 +54,9 @@ def login():
 @gw.get('/auth/logout')
 def logout():
     try:
-        endpoint = f"http://auth:5100/auth/logout"
+        ip = GATEWAY_REGISTRY['auth-service'][0]['ip']
+        port = GATEWAY_REGISTRY['auth-service'][0]['port']
+        endpoint = f"http://{ip}:{port}/auth/logout"
         
         resp = requests.get(endpoint, headers=flask.request.headers)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
@@ -103,16 +107,19 @@ def update():
     global GATEWAY_REGISTRY
     while True:
         try:
-            r = requests.get(f"http://{DISCOVERY}/index")
+            r = requests.get("http://discovery:6666/index")
             if r.status_code == 200:
                 GATEWAY_REGISTRY = r.json()
+            
+            print('registry: ', GATEWAY_REGISTRY, flush=True)
             sleep(10)
         except:
-            print('update() requests error', flush=True)
+            print('update() requests error, is discovery down?', flush=True)
+            sleep(10)
 
 
 if __name__ == '__main__':
-    # update_thread = threading.Thread(target=update)
-    # update_thread.start()
+    update_thread = threading.Thread(target=update)
+    update_thread.start()
 
     gw.run(host='0.0.0.0', port=5555)

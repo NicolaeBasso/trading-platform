@@ -21,7 +21,7 @@ def update_redis_ip():
         global r
         sleep(10)
         try:
-            sentinel = Sentinel([('sentinel', 26379)], sentinel_kwargs={'password': 'redis'})
+            sentinel = Sentinel([('sentinel', 26379)])
             host, port = sentinel.discover_master('redis-master')
             r = redis.Redis(host=host, port=port, db=0, password='redis')
         except:

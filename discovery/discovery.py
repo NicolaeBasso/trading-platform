@@ -34,31 +34,40 @@ def ping(ip,port,timeout=2):
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     sock.settimeout(timeout)
     try:
-       sock.connect((ip,port))
+        if "auth" in ip:
+            requests.get(f'http://{ip}:{port}/users')
+        elif "core" in ip:
+            requests.get(f'http://{ip}:{port}/trade/all')
+
+        sock.connect((ip,port))
     except:
-    #    print(False, flush=True)
-       return False
+        if "auth" in ip:
+            print(f'timeout for {ip}:{port}/users, removing service')
+        elif "core" in ip:
+            print(f'timeout for {ip}:{port}/trade/all, removing service')
+        return False
     else:
-       sock.close()
-       return True
+        sock.close()
+        return True
 
 
 def check():
     global DISCOVERY_REGISTRY
     while True:
         sleep(5)
-        for key in list(DISCOVERY_REGISTRY.keys()): #[auth, uth]
+        for key in list(DISCOVERY_REGISTRY.keys()): #[auth, core]
             sleep(1)
             if len(DISCOVERY_REGISTRY[key]) == 0:
                 del DISCOVERY_REGISTRY[key]
                 break
 
-            indeces = range(len(DISCOVERY_REGISTRY[key]))[0::-1]
-            for i in indeces: #[2, 1, 0]
+            indeces = list(range(len(DISCOVERY_REGISTRY[key])))
+            
+            for i in indeces[::-1]: 
+                print(f"indeces: {indeces}, key: {key}, i: {i}; {DISCOVERY_REGISTRY}")
                 if not ping(DISCOVERY_REGISTRY[key][i]['ip'], DISCOVERY_REGISTRY[key][i]['port']):
                     del DISCOVERY_REGISTRY[key][i]
-                    # print('deleting index', flush=True)
-                    # print(key, i, flush=True)
+
 
 
 
