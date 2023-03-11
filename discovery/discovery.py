@@ -42,9 +42,9 @@ def ping(ip,port,timeout=2):
         sock.connect((ip,port))
     except:
         if "auth" in ip:
-            print(f'timeout for {ip}:{port}/users, removing service')
+            print(f'timeout for {ip}:{port}/users, removing service', flush=True)
         elif "core" in ip:
-            print(f'timeout for {ip}:{port}/trade/all, removing service')
+            print(f'timeout for {ip}:{port}/trade/all, removing service', flush=True)
         return False
     else:
         sock.close()

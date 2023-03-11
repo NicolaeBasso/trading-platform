@@ -67,12 +67,12 @@ def logout():
         return flask.jsonify({"status": "service not found in GATEWAY_REGISTRY"})    
 
 
-@gw.get('/BTCUSD/<ticker>')
-def ticker(ticker):
+@gw.get('/BTCUSD/ALL')
+def ticker():
     try:                
         # print(f"/ticker/{ticker}", flush=True)
 
-        endpoint = f"http://cache:6380/BTCUSD/{ticker}"
+        endpoint = f"http://py-cache:6380/BTCUSD/ALL"
         
         print('log1', flush=True)
         resp = requests.get(endpoint)
