@@ -1,12 +1,24 @@
 generator client {
   provider = "prisma-client-js"
-  // binaryTargets = ["linux-arm64-openssl-1.1.x"]
-  // binaryTargets = ["native"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("CORE_SERVICE_DATABASE_URL")
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String  @unique @default(uuid()) 
+  email String  @unique
+  hashedPassword String 
+  role Role? @default(USER)
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt()
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 model Trade {
   id String @unique @default(uuid())
@@ -27,6 +39,6 @@ model Trade {
 
 enum TradeType {
   CFD
-  OPTION
-  STOCK
+  OPTIONS
+  STOCKS
 }

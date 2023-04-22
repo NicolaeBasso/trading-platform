@@ -1,21 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  ValidationPipe,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from "@nestjs/throttler";
 import { RolesGuard } from '../utils/guards/roles.guard';
-import { TradeService } from './trade.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
-import { RolesDecorator } from '../utils/decorators/roles.decorator';
-import { Roles } from '../utils/constants';
+import { TradeService } from './trade.service';
 
 @Controller('trade')
 export class TradeController {

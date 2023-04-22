@@ -12,10 +12,16 @@ describe('TradeController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule, DBAdapterModule, JwtModule, PassportModule, ConfigModule.forRoot({
-        envFilePath: '.env',
-        isGlobal: true,
-      }),],
+      imports: [
+        PrismaModule,
+        DBAdapterModule,
+        JwtModule,
+        PassportModule,
+        ConfigModule.forRoot({
+          envFilePath: '.env',
+          isGlobal: true,
+        }),
+      ],
       controllers: [TradeController],
       providers: [TradeService],
     }).compile();

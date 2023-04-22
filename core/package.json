@@ -1,8 +1,8 @@
 {
-  "name": "auth",
+  "name": "overmind-trading-core-service",
   "version": "0.0.1",
-  "description": "Trading Platform Auth Service",
-  "author": "nbasso",
+  "description": "Overmind Trading Core service",
+  "author": "Nicolae Basso",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -12,6 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "dev": "nest start --watch",
+    "startup:dev:local": "docker compose up -d --build --force-recreate && npm i && npx prisma migrate dev && nest start --watch",
     "migrate:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
