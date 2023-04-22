@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "TradeType" AS ENUM ('CFD', 'OPTION', 'STOCK');
+CREATE TYPE "TradeType" AS ENUM ('CFD', 'OPTIONS', 'STOCK');
 
 -- CreateTable
 CREATE TABLE "Trade" (
