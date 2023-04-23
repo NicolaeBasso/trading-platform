@@ -11,29 +11,20 @@ import {
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
-import { TradeService } from './trade.service';
+import { TradeService } from './trades.service';
+import { Roles } from '../utils/constants';
+import { RolesDecorator } from '../utils/decorators/roles.decorator';
 
-@Controller('trade')
-export class TradeController {
+@Controller('trades')
+export class TradesController {
   constructor(private readonly tradeService: TradeService) {}
 
-  @Post()
+  @Post('open')
   create(
     @Body()
     createTradeDto: CreateTradeDto,
   ) {
-    console.log({ createTradeDto });
     return this.tradeService.create(createTradeDto);
-  }
-
-  @Get('all')
-  findAll() {
-    return this.tradeService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tradeService.findOne(id);
   }
 
   @Patch('update/:id')
@@ -41,20 +32,28 @@ export class TradeController {
     return this.tradeService.update(id, updateTradeDto);
   }
 
+  @RolesDecorator(Roles.USER)
+  @UseGuards(RolesGuard)
   @Patch('close/:id')
   close(@Param('id') id: string) {
     return this.tradeService.close(id);
   }
 
-  @Delete('/remove/:id')
-  remove(@Param('id') id: string) {
-    return this.tradeService.remove(id);
+  @RolesDecorator(Roles.USER)
+  @Get('all')
+  findAll() {
+    return this.tradeService.findAll();
+  }
+
+  @UseGuards(RolesGuard)
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.tradeService.findOne(id);
   }
 
   @Delete('/removeAll')
-  // @RolesDecorator(Roles.ADMIN)
+  @RolesDecorator(Roles.ADMIN)
   @UseGuards(RolesGuard)
-  // @Throttle(10, 1)
   removeAll() {
     return this.tradeService.removeAll();
   }

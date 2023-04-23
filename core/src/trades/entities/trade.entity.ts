@@ -1,4 +1,4 @@
-import { TradeType } from '../types/tradeType';
+import { TradeType } from '../types/trade-type.type';
 
 export class Trade {
   id: string;
@@ -12,6 +12,8 @@ export class Trade {
   tradeSize: number;
   priceOpened: number;
   priceClosed: number;
+  stopLoss: number;
+  takeProfit: number;
   overnightInterest: number;
   overnightFee: number;
 }

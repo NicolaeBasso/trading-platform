@@ -2,19 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { DBAdapterModule } from '../db-adapter/adapter.module';
 import { PrismaModule } from '../../prisma/prisma.module';
-import { TradeController } from './trade.controller';
-import { TradeService } from './trade.service';
+import { TradesController } from './trades.controller';
+import { TradeService } from './trades.service';
 
-describe('TradeController', () => {
-  let controller: TradeController;
+describe('TradesController', () => {
+  let controller: TradesController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         PrismaModule,
-        DBAdapterModule,
         JwtModule,
         PassportModule,
         ConfigModule.forRoot({
@@ -22,11 +20,11 @@ describe('TradeController', () => {
           isGlobal: true,
         }),
       ],
-      controllers: [TradeController],
+      controllers: [TradesController],
       providers: [TradeService],
     }).compile();
 
-    controller = module.get<TradeController>(TradeController);
+    controller = module.get<TradesController>(TradesController);
   });
 
   it('should be defined', () => {

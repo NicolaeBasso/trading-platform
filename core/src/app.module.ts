@@ -7,7 +7,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
-import { TradeModule } from './trades/trade.module';
+import { TradeModule } from './trades/trades.module';
 import { UsersModule } from './users/users.module';
 
 @Module({

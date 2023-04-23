@@ -5,12 +5,16 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getMyUser(id: string, req: Request) {
+  async getMyUser(req: Request) {
+    console.log(req.user);
+
+    const { id, email }: Partial<User> = req.user;
     const decodedUserInfo = req.user as { id: string; email: string };
 
     const foundUser = await this.prisma.user.findUnique({ where: { id } });

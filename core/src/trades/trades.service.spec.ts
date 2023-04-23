@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { DBAdapterModule } from '../db-adapter/adapter.module';
 import { PrismaModule } from '../../prisma/prisma.module';
-import { TradeService } from './trade.service';
+import { TradeService } from './trades.service';
 import { Trade } from './entities/trade.entity';
 
 describe('TradeService', () => {

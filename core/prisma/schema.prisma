@@ -30,9 +30,11 @@ model Trade {
   leverageRatio Int @default(1)
   marginSize Float?
   leverageSize Float?
-  tradeSize Float @default(1)
+  tradeSize Float @default(0.1)
   priceOpened Float  
   priceClosed Float?
+  stopLoss Float?
+  takeProfit Float?
   overnightInterest Float @default(0.1)
   overnightFee Float?
 }

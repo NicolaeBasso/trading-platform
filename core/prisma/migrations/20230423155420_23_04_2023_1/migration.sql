@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Trade" ADD COLUMN     "stopLoss" DOUBLE PRECISION,
+ADD COLUMN     "takeProfit" DOUBLE PRECISION,
+ALTER COLUMN "tradeSize" SET DEFAULT 0.1;
