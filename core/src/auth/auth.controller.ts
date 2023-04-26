@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, Role } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,19 +21,12 @@ export class AuthController {
   @Post('register')
   register(@Body() dto: AuthDto) {
     const { email, password } = dto;
-    return this.authService.register({ email, password, role: Role.USER });
-  }
-
-  @Post('registerAdmin')
-  registerAdmin(@Body() dto: AuthDto) {
-    return this.authService.register({ ...dto, role: Role.ADMIN }).then(() => {
-      this.logger.log(`ADMIN registered! ${dto.email}`);
-    });
+    return this.authService.register({ email, password });
   }
 
   @Post('login')
-  async login(@Request() req, @Response() res, @Body() dto: AuthDto) {
-    this.logger.log(`Login! ${req.user.id} ${req.user.email}`);
+  async login(@Request() req, @Response() res, @Body() dto: LoginDto) {
+    this.logger.log(`Login! ${dto.email} ${dto.password}`);
 
     return this.authService.login(dto, req, res);
   }

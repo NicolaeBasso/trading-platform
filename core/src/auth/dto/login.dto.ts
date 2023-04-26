@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsEmail, Length } from 'class-validator';
 
-export class AuthDto {
+export class LoginDto {
   @IsNotEmpty()
   @IsString()
   @IsEmail()
@@ -10,9 +10,4 @@ export class AuthDto {
   @IsString()
   @Length(3, 20, { message: 'Password has to be at between 3 and 20 chars' })
   public password: string;
-}
-
-export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
 }

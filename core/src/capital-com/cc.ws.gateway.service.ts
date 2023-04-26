@@ -1,20 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsResponse,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { HttpService } from '@nestjs/axios';
 import { WebSocket } from 'ws';
+// import { Socket
 
+// @Injectable()
 @WebSocketGateway({
+  namespace: 'market',
+  transports: ['websocket'],
   cors: {
     origin: '*',
   },
 })
-@Injectable()
-export class CapitalComWebSocketGateway {
+export class CapitalComGateway {
   @WebSocketServer()
   server: Server;
 
-  private readonly logger = new Logger(CapitalComWebSocketGateway.name);
+  private readonly logger = new Logger(CapitalComGateway.name);
 
   // Access token
   // private cst = 'wce2gZ5p4R3QaF3XP6L6gR55';
@@ -25,6 +35,28 @@ export class CapitalComWebSocketGateway {
 
   public subscriptions = {}; // Store subscription statuses by epic
   public pairs = {};
+
+  @SubscribeMessage('events')
+  handleEvent(
+    @MessageBody() data: unknown,
+    // @ConnectedSocket() client: Socket,
+  ): WsResponse<unknown> {
+    console.log('data', data);
+    const event = 'events';
+    return { event, data: { data, received: true } };
+  }
+
+  @SubscribeMessage('course')
+  handleRequestLiveCourse(
+    @MessageBody() data: { pair: string } & any,
+    // @ConnectedSocket() client: Socket,
+  ): WsResponse<unknown> {
+    console.log('data', data);
+    const event = 'course';
+    console.log(this.pairs);
+
+    return { event, data: { data, pairs: this.pairs, received: true } };
+  }
 
   constructor(private readonly httpService: HttpService) {
     const ws = new WebSocket(

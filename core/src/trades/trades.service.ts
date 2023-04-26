@@ -4,23 +4,23 @@ import { UpdateTradeDto } from './dto/update-trade.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Trade } from './entities/trade.entity';
-import { CapitalComWebSocketGateway } from '../capital-com/cc.ws.gateway.service';
+import { CapitalComGateway } from '../capital-com/cc.ws.gateway.service';
 
 @Injectable()
 export class TradeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly ccWsGateway: CapitalComWebSocketGateway,
+    private readonly capitalComGateway: CapitalComGateway,
   ) {}
 
   async create(createTradeDto: CreateTradeDto) {
     const { pair, tradeSize } = createTradeDto;
 
-    console.log(`Subscriptions`, this.ccWsGateway.subscriptions);
-    console.log(`Pairs`, this.ccWsGateway.pairs);
+    console.log(`Subscriptions`, this.capitalComGateway.subscriptions);
+    console.log(`Pairs`, this.capitalComGateway.pairs);
 
-    const priceOpened = this.ccWsGateway.pairs[pair].bid;
+    const priceOpened = this.capitalComGateway.pairs[pair].bid;
 
     const tradeCreated = await this.prisma.trade.create({
       data: {

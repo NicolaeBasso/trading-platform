@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { TradeModule } from './trades/trades.module';
 import { UsersModule } from './users/users.module';
+import { CapitalComModule } from './capital-com/cc.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
     PassportModule,
     PrismaModule,
     HealthModule,
+    CapitalComModule,
     TradeModule,
     AuthModule,
     UsersModule,

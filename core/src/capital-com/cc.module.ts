@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CapitalComWebSocketGateway } from './cc.ws.gateway.service';
+import { CapitalComGateway } from './cc.ws.gateway.service';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [HttpModule],
-  providers: [CapitalComWebSocketGateway],
-  exports: [CapitalComWebSocketGateway],
+  providers: [CapitalComGateway],
+  exports: [CapitalComGateway],
 })
 export class CapitalComModule {}

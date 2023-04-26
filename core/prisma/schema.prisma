@@ -10,6 +10,7 @@ datasource db {
 model User {
   id    String  @unique @default(uuid()) 
   email String  @unique
+  fullName String? 
   hashedPassword String 
   role Role? @default(USER)
   createdAt DateTime @default(now())

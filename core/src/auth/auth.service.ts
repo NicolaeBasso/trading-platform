@@ -1,21 +1,23 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto, Role } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { jwtSecret } from '../utils/constants';
+import { Roles, jwtSecret } from '../utils/constants';
 import { Request, Response } from 'express';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
   async register(dto: AuthDto) {
-    const { email, password, role = Role.USER } = dto;
+    const { email, password } = dto;
 
     const userExists = await this.prisma.user.findUnique({
       where: { email },
@@ -31,15 +33,16 @@ export class AuthService {
       data: {
         email,
         hashedPassword,
-        role,
+        role: Role.USER,
       },
     });
 
-    return { message: 'User created succefully' };
+    return { message: 'User created succefully', status: HttpStatus.CREATED };
   }
 
-  async login(dto: AuthDto, req: Request, res: Response) {
+  async login(dto: LoginDto, req: Request, res: Response) {
     const { email, password } = dto;
+    console.log(email);
 
     const foundUser = await this.prisma.user.findUnique({
       where: {
@@ -72,7 +75,7 @@ export class AuthService {
 
     res.cookie('token', token, {});
 
-    return res.send({ message: 'Logged in succefully' });
+    return res.send({ message: 'Logged in succefully', status: HttpStatus.OK });
   }
 
   async removeAllUsers(res: Response) {
