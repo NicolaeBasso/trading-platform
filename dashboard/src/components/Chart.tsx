@@ -16,7 +16,7 @@ const Chart = () => {
   const { darkMode } = useContext(ThemeContext);
   const { stockSymbol } = useContext(StockContext);
 
-  const [filter, setFilter] = useState('1W');
+  const [filter, setFilter] = useState('1Y');
   const [data, setData] = useState([]);
 
   const formatData = (data) => {

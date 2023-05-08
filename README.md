@@ -11,10 +11,10 @@ https://flask.palletsprojects.com/en/2.2.x/
 
 ```bash
 In first terminal (core api service):
-$ npm run core
+$ npm run core:startup
 
 In second terminal (user frontend):
-$ npm run dashboard
+$ npm run dashboard:startup
 ```
 
 ## Prerequisites
