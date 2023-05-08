@@ -3,13 +3,19 @@ import { Routes, Route } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { MantineProvider, Text } from '@mantine/core';
-import { Dashboard } from './pages/Dashboard';
+import { Dashboard as AnyChartDashboard } from './pages/Dashboard';
+import Dashboard from './components/Dashboard';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { io } from 'socket.io-client';
+import ThemeContext from './contexts/ThemeContext';
+import StockContext from './contexts/StockContext';
 
 export default function App() {
   // const [btcUsd, setBtcUsd] = useState(null);
   const [pairs, setPairs] = useState({});
+  const [darkMode, setDarkMode] = useState(false);
+  const [stockSymbol, setStockSymbol] = useState('FB');
 
   useEffect(() => {
     console.log('Effect');
@@ -66,15 +72,21 @@ export default function App() {
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
-      {router}
-      {Object.entries(pairs).map((pair: any) => {
-        return (
-          <Text size={'xl'} key={pair[0]}>
-            {pair[0]}
-            {JSON.stringify(pair[1])}
-          </Text>
-        );
-      })}
+      <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+        <StockContext.Provider value={{ stockSymbol, setStockSymbol }}>
+          {router}
+          {Object.entries(pairs).map((pair: any) => {
+            return (
+              <Text size={'xl'} key={pair[0]}>
+                {pair[0]}
+                {JSON.stringify(pair[1])}
+              </Text>
+            );
+          })}
+          {/* <Dashboard /> */}
+          <AnyChartDashboard />
+        </StockContext.Provider>
+      </ThemeContext.Provider>
     </MantineProvider>
   );
 }
