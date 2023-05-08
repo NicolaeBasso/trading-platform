@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -14,6 +15,8 @@ import { ROLES_KEY } from 'src/utils/constants';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
+  private readonly logger = new Logger(RolesGuard.name);
+
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
@@ -32,12 +35,7 @@ export class RolesGuard implements CanActivate {
         return true;
       }
       const req = context.switchToHttp().getRequest();
-      const authHeader = req.headers.authorization;
-
-      const bearer = authHeader?.split(' ')[0];
-      // const token = authHeader?.split(' ')[1];
       const token = req.cookies?.token;
-
 
       if (!token) {
         throw new UnauthorizedException({ message: 'Unauthorized' });
@@ -49,7 +47,7 @@ export class RolesGuard implements CanActivate {
           secret: this.configService.get<string>('JWT_SECRET'),
         });
       } catch (error) {
-        console.error(error);
+        this.logger.error(error);
       }
       req.user = user;
 

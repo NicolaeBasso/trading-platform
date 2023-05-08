@@ -1,20 +1,16 @@
-import { Controller, Get, Logger, HttpException } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
+  DiskHealthIndicator,
+  HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
-  HealthCheck,
   MemoryHealthIndicator,
-  DiskHealthIndicator,
 } from '@nestjs/terminus';
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import { HttpService } from '@nestjs/axios';
-import { catchError, firstValueFrom, map, tap } from 'rxjs';
-import { ConfigService } from '@nestjs/config';
-// import { HttpService } from '@nestjs/common';
 
 @Controller('health')
 export class HealthController {
-  private readonly logger = new Logger('HealthLogger');
+  private readonly logger = new Logger(HealthController.name);
 
   constructor(
     private health: HealthCheckService,
@@ -22,27 +18,10 @@ export class HealthController {
     private memoryHealthIndicator: MemoryHealthIndicator,
     private diskHealthIndicator: DiskHealthIndicator,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async onApplicationBootstrap(): Promise<any> {
-    const nodeConf = {
-      ip: `${this.configService.get<string>('CORE_SERVICE_CONTAINER_NAME')}`,
-      port: +this.configService.get<string>('CORE_SERVICE_PORT'),
-      type: this.configService.get<string>('CORE_SERVICE_APP_NAME')
-    }
-
-    console.log('Sent node conf = ', nodeConf);
-
-    const res = await axios
-      .post(`${this.configService.get<string>('DISCOVERY_URL')}/update`, nodeConf)
-      .catch((err) => {
-        throw new HttpException(
-          'Failed communicating with Discovery Service!',
-          500,
-        );
-      });
-
-    console.log('DISCOVERY_RESPONSE = ', res.data);
+    this.logger.log('HealthController onApplicationBootstrap');
   }
 
   @Get()
@@ -53,8 +32,6 @@ export class HealthController {
       () => this.http.pingCheck('docs.nestjs.com', 'https://docs.nestjs.com'),
       // The process should successfully notify Discovery Service of its status
       () => {
-        console.log('Health!');
-
         return this.http.pingCheck('google.com', 'https://google.com');
       },
       // The process should not use more than 300MB memory
