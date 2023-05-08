@@ -1,0 +1,12 @@
+{
+  "name": "overmind-trading",
+  "version": "1.0.0",
+  "description": "Overmind Trading",
+  "author": "Nicolae Basso, Ion Gavirlita",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "core": "cd ./core && docker compose up -d --build --force-recreate && npm i && npx prisma migrate dev && nest start --watch",
+    "dashboard": "cd ./dashboard && npm i && npm start"
+  }
+}
