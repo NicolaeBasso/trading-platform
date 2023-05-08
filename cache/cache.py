@@ -13,22 +13,7 @@ session_headers = {
     'CST': None
 }
 
-r = redis.Redis(host='redis-master', port=6379, db=0, password='redis')
-
-
-def update_redis_ip():
-    while True:
-        global r
-        sleep(10)
-        try:
-            sentinel = Sentinel([('sentinel', 26379)])
-            host, port = sentinel.discover_master('redis-master')
-            r = redis.Redis(host=host, port=port, db=0, password='redis')
-        except:
-            print('update_redis_ip throw', flush=True)
-update = Thread(target=update_redis_ip)
-update.start()
-            
+r = redis.Redis(host='redis-master', port=6379, db=0)         
 
 
 def create_session():
@@ -90,41 +75,6 @@ def server_time():
     except: print('server_time throw', flush=True)
 
 
-def convert_epoch(resolution=None):
-    epoch = server_time() / 1000
-
-    NOW = datetime.datetime.fromtimestamp(epoch).strftime('%Y-%m-%dT%H:%M:%S')
-    
-
-    MINUTE = datetime.datetime.fromtimestamp(epoch - 60000).strftime('%Y-%m-%dT%H:%M:%S')
-    MINUTE_5 = datetime.datetime.fromtimestamp(epoch - 300000).strftime('%Y-%m-%dT%H:%M:%S')
-    MINUTE_15 = datetime.datetime.fromtimestamp(epoch - 900000).strftime('%Y-%m-%dT%H:%M:%S')
-    MINUTE_30 = datetime.datetime.fromtimestamp(epoch - 1800000).strftime('%Y-%m-%dT%H:%M:%S')
-    HOUR = datetime.datetime.fromtimestamp(epoch - 3600000).strftime('%Y-%m-%dT%H:%M:%S')
-    HOUR_4 = datetime.datetime.fromtimestamp(epoch - 14400000).strftime('%Y-%m-%dT%H:%M:%S')
-    DAY = datetime.datetime.fromtimestamp(epoch - 86400000).strftime('%Y-%m-%dT%H:%M:%S')
-    WEEK = datetime.datetime.fromtimestamp(epoch - 604800000, tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
-    
-    if resolution == 'MINUTE':
-        return [MINUTE, NOW]
-    elif resolution == 'MINUTE_5':
-        return [MINUTE_5, NOW]
-    elif resolution == 'MINUTE_15':
-        return [MINUTE_15, NOW]
-    elif resolution == 'MINUTE_30':
-        return [MINUTE_30, NOW]        
-    elif resolution == 'HOUR':
-        return [HOUR, NOW]
-    elif resolution == 'HOUR_4':
-        return [HOUR_4, NOW]
-    elif resolution == 'DAY':
-        return [DAY, NOW]
-    elif resolution == 'WEEK':
-        return [WEEK, NOW]
-    else:
-        return None
-
-
 def historical_price(epic='BTCUSD', resolution='WEEK', max='1000'):
     endpoint = f'https://demo-api-capital.backend-capital.com/api/v1/prices/{epic}?resolution={resolution}&max={max}'
 
@@ -144,28 +94,14 @@ def update_cache():
         r.json().set('BTCUSD', Path(f'.{res}'), data)
 
 
-cache = flask.Flask(__name__)
-@cache.get('/BTCUSD/<interval>')
-def btcusd(interval):
-    print('get received', flush=True)
-    if interval == 'ALL':
-        print(interval, flush=True)
-        print('if get', flush=True)
-
-        data = r.json().get('BTCUSD')
-        return flask.jsonify(data)
-    else:
-        print(interval, flush=True)
-        print('else get', flush=True)
-
-        data = r.json().get('BTCUSD', f'$.{interval}')
-        return flask.jsonify(data)
+app = flask.Flask(__name__)
+from cache_reverse_proxy import cache_endpoints
+app.register_blueprint(cache_endpoints)
 
 
 if __name__ == '__main__':
     session = Thread(target=create_session)
     session.start()
     sleep(5)
-    update_cache()
 
-    cache.run(host='0.0.0.0', port=6380)
+    app.run(host='0.0.0.0', port=6380)
