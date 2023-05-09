@@ -6,11 +6,13 @@ import Chart from './Chart';
 import Header from './Header';
 import StockContext from '../contexts/StockContext';
 import { fetchStockDetails, fetchQuote } from '../utils/api/stock-api';
+import { MarketsAPI } from '../api/markets';
 
 const Dashboard = () => {
   const { darkMode } = useContext(ThemeContext);
   const { stockSymbol } = useContext(StockContext);
 
+  const [tickerHistory, setTickerHistory] = useState([]);
   const [stockDetails, setStockDetails]: any = useState({});
   const [quote, setQuote]: any = useState({});
 
@@ -38,6 +40,15 @@ const Dashboard = () => {
     updateStockDetails();
     updateStockOverview();
   }, [stockSymbol]);
+
+  const fetchData = async () => {
+    const data = await MarketsAPI.getTickerHistory({ ticker: 'BTCUSD', period: 'WEEK' });
+    setTickerHistory(data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div

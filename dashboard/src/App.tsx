@@ -33,11 +33,11 @@ export default function App() {
     });
 
     socket.on('events', (event) => {
-      console.log(`Received message: ${event.data}`);
+      // console.log(`Received message: ${event.data}`);
     });
 
     socket.on('course', (event) => {
-      console.log('Received message:', event);
+      // console.log('Received message:', event);
       setPairs(event.pairs);
     });
 
@@ -56,7 +56,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log(pairs);
+    // console.log(pairs);
   }, [pairs]);
 
   const router = (
@@ -68,7 +68,7 @@ export default function App() {
     </Routes>
   );
 
-  console.log(Object.entries(pairs));
+  // console.log(Object.entries(pairs));
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
@@ -84,7 +84,7 @@ export default function App() {
             );
           })}
           {/* <Dashboard /> */}
-          <AnyChartDashboard />
+          {/* <AnyChartDashboard /> */}
         </StockContext.Provider>
       </ThemeContext.Provider>
     </MantineProvider>
