@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 WORKDIR /app
-RUN pip3 install flask redis requests
+RUN pip3 install flask flask-cors redis requests
 COPY . .
 CMD ["python3", "cache.py"]
 

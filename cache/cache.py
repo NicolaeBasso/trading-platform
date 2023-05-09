@@ -1,13 +1,14 @@
 from time import sleep
 from threading import Thread
 import flask
+from flask_cors import CORS
 
 import session
 from cache_reverse_proxy import cache_endpoints
 
 app = flask.Flask(__name__)
 app.register_blueprint(cache_endpoints)
-
+CORS(app)
 
 if __name__ == '__main__':
     session = Thread(target=session.create_session)
