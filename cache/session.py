@@ -85,5 +85,5 @@ def update_cache(ticker):
     else: r.json().set(ticker, Path.root_path(),  dict())
     
     for res in ['MINUTE', 'MINUTE_5', 'MINUTE_15', 'MINUTE_30', 'HOUR', 'HOUR_4', 'DAY', 'WEEK']:
-        data = historical_price(resolution=res)
+        data = historical_price(epic=ticker, resolution=res)
         r.json().set(ticker, Path(f'.{res}'), data)
