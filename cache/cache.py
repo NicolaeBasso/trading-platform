@@ -103,5 +103,6 @@ if __name__ == '__main__':
     session = Thread(target=create_session)
     session.start()
     sleep(5)
+    update_cache()
 
     app.run(host='0.0.0.0', port=6380)
