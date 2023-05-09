@@ -12,10 +12,11 @@ import {
 } from '../utils/helpers/date-helper';
 import { chartConfig } from '../constants/config';
 
-const Chart = () => {
+const Chart = (props) => {
   const { darkMode } = useContext(ThemeContext);
   const { stockSymbol } = useContext(StockContext);
 
+  const { tickerHistory } = props;
   const [filter, setFilter] = useState('1Y');
   const [data, setData] = useState([]);
 
@@ -50,6 +51,7 @@ const Chart = () => {
           startTimestampUnix,
           endTimestampUnix,
         );
+
         setData(formatData(result));
         // const data = { c: [100, 200], t: [100, 101] }
         // setData(formatData(data))
@@ -61,6 +63,8 @@ const Chart = () => {
 
     updateChartData();
   }, [stockSymbol, filter]);
+
+  // console.log('AreaChart data = ', data);
 
   return (
     <Card>
@@ -78,7 +82,13 @@ const Chart = () => {
         ))}
       </ul>
       <ResponsiveContainer>
-        <AreaChart data={data}>
+        {/* <AreaChart data={data}> */}
+        <AreaChart
+          data={tickerHistory.map((el) => ({
+            value: el.closePrice.bid,
+            date: el.snapshotTimeUTC,
+          }))}
+        >
           <defs>
             <linearGradient id='chartColor' x1='0' y1='0' x2='0' y2='1'>
               <stop

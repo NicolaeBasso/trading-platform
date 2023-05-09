@@ -12,6 +12,7 @@ const Dashboard = () => {
   const { darkMode } = useContext(ThemeContext);
   const { stockSymbol } = useContext(StockContext);
 
+  const [ticker, setTicker] = useState('BTCUSD');
   const [tickerHistory, setTickerHistory] = useState([]);
   const [stockDetails, setStockDetails]: any = useState({});
   const [quote, setQuote]: any = useState({});
@@ -30,6 +31,7 @@ const Dashboard = () => {
     const updateStockOverview = async () => {
       try {
         const result = await fetchQuote(stockSymbol);
+        console.log('quote', result);
         setQuote(result);
       } catch (error) {
         setQuote({});
@@ -42,8 +44,8 @@ const Dashboard = () => {
   }, [stockSymbol]);
 
   const fetchData = async () => {
-    const data = await MarketsAPI.getTickerHistory({ ticker: 'BTCUSD', period: 'WEEK' });
-    setTickerHistory(data);
+    const data = await MarketsAPI.getTickerHistory({ ticker, period: 'WEEK' });
+    setTickerHistory(data[0]?.prices);
   };
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const Dashboard = () => {
         <Header name={stockDetails.name} />
       </div>
       <div className='md:col-span-2 row-span-4'>
-        <Chart />
+        <Chart tickerHistory={tickerHistory} />
       </div>
       <div>
         <Overview

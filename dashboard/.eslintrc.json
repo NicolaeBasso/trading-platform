@@ -29,6 +29,7 @@
   },
   "plugins": ["react", "@typescript-eslint", "react-hooks", "prettier", "jest"],
   "rules": {
+    "react-hooks/exhaustive-deps": "off",
     "@typescript-eslint/no-shadow": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
