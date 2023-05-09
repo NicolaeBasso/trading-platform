@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Card from './Card';
+import TickerContext from '../contexts/TickerContext';
+import LiveCourseContext from '../contexts/LiveCourseContext';
 
 const Overview = ({ symbol, price, change, changePercent, currency }) => {
+  const { ticker } = useContext(TickerContext);
+  const { liveCourse } = useContext(LiveCourseContext);
+
+  console.log(liveCourse, ticker);
+
   return (
     <Card>
       <span className='absolute left-4 top-4 text-neutral-400 text-lg xl:text-xl 2xl:text-2xl'>
@@ -9,7 +16,7 @@ const Overview = ({ symbol, price, change, changePercent, currency }) => {
       </span>
       <div className='w-full h-full flex items-center justify-around'>
         <span className='text-2xl xl:text-4xl 2xl:text-5xl flex items-center'>
-          ${price}
+          ${liveCourse[ticker]?.bid || ''}
           <span className='text-lg xl:text-xl 2xl:text-2xl text-neutral-400 m-2'>{currency}</span>
         </span>
         <span

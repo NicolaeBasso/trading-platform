@@ -3,21 +3,20 @@ import ChartFilter from './ChartFilter';
 import Card from './Card';
 import { Area, XAxis, YAxis, ResponsiveContainer, AreaChart, Tooltip } from 'recharts';
 import ThemeContext from '../contexts/ThemeContext';
-import StockContext from '../contexts/StockContext';
+import TickerContext from '../contexts/TickerContext';
 import { fetchHistoricalData } from '../utils/api/stock-api';
 import {
   createDate,
   convertDateToUnixTimestamp,
   convertUnixTimestampToDate,
 } from '../utils/helpers/date-helper';
-import { chartConfig } from '../constants/config';
+import { chartConfig, timeFrames } from '../constants/config';
 
 const Chart = (props) => {
   const { darkMode } = useContext(ThemeContext);
-  const { stockSymbol } = useContext(StockContext);
+  const { ticker } = useContext(TickerContext);
 
-  const { tickerHistory } = props;
-  const [filter, setFilter] = useState('1Y');
+  const { tickerHistory, period, setPeriod } = props;
   const [data, setData] = useState([]);
 
   const formatData = (data) => {
@@ -31,7 +30,7 @@ const Chart = (props) => {
 
   useEffect(() => {
     const getDateRange = () => {
-      const { days, weeks, months, years } = chartConfig[filter];
+      const { days, weeks, months, years } = chartConfig[period];
 
       const endDate = new Date();
       const startDate = createDate(endDate, -days, -weeks, -months, -years);
@@ -44,9 +43,9 @@ const Chart = (props) => {
     const updateChartData = async () => {
       try {
         const { startTimestampUnix, endTimestampUnix } = getDateRange();
-        const resolution = chartConfig[filter].resolution;
+        const resolution = chartConfig[period].resolution;
         const result = await fetchHistoricalData(
-          stockSymbol,
+          ticker,
           resolution,
           startTimestampUnix,
           endTimestampUnix,
@@ -62,27 +61,26 @@ const Chart = (props) => {
     };
 
     updateChartData();
-  }, [stockSymbol, filter]);
+  }, [ticker, period]);
 
   // console.log('AreaChart data = ', data);
 
   return (
     <Card>
       <ul className='flex absolute top-2 right-2 z-40'>
-        {Object.keys(chartConfig).map((item) => (
-          <li key={item}>
+        {Object.keys(timeFrames).map((el, idx, arr) => (
+          <li key={el}>
             <ChartFilter
-              text={item}
-              active={filter === item}
+              text={timeFrames[el].text}
+              active={period === el}
               onClick={() => {
-                setFilter(item);
+                setPeriod(timeFrames[el].api);
               }}
             />
           </li>
         ))}
       </ul>
       <ResponsiveContainer>
-        {/* <AreaChart data={data}> */}
         <AreaChart
           data={tickerHistory.map((el) => ({
             value: el.closePrice.bid,

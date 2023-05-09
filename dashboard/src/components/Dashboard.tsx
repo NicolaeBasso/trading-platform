@@ -4,15 +4,17 @@ import Overview from './Overview';
 import Details from './Details';
 import Chart from './Chart';
 import Header from './Header';
-import StockContext from '../contexts/StockContext';
+import TickerContext from '../contexts/TickerContext';
 import { fetchStockDetails, fetchQuote } from '../utils/api/stock-api';
 import { MarketsAPI } from '../api/markets';
+import { timeFrames } from '../constants/config';
 
 const Dashboard = () => {
   const { darkMode } = useContext(ThemeContext);
-  const { stockSymbol } = useContext(StockContext);
+  const { ticker, setTicker } = useContext(TickerContext);
 
-  const [ticker, setTicker] = useState('BTCUSD');
+  // const [ticker, setTicker] = useState('BTCUSD');
+  const [period, setPeriod] = useState(timeFrames.DAY.api);
   const [tickerHistory, setTickerHistory] = useState([]);
   const [stockDetails, setStockDetails]: any = useState({});
   const [quote, setQuote]: any = useState({});
@@ -20,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     const updateStockDetails = async () => {
       try {
-        const result = await fetchStockDetails(stockSymbol);
+        const result = await fetchStockDetails(ticker);
         setStockDetails(result);
       } catch (error) {
         setStockDetails({});
@@ -30,7 +32,7 @@ const Dashboard = () => {
 
     const updateStockOverview = async () => {
       try {
-        const result = await fetchQuote(stockSymbol);
+        const result = await fetchQuote(ticker);
         console.log('quote', result);
         setQuote(result);
       } catch (error) {
@@ -41,16 +43,16 @@ const Dashboard = () => {
 
     updateStockDetails();
     updateStockOverview();
-  }, [stockSymbol]);
+  }, [ticker]);
 
   const fetchData = async () => {
-    const data = await MarketsAPI.getTickerHistory({ ticker, period: 'WEEK' });
+    const data = await MarketsAPI.getTickerHistory({ ticker, period });
     setTickerHistory(data[0]?.prices);
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [period]);
 
   return (
     <div
@@ -62,11 +64,11 @@ const Dashboard = () => {
         <Header name={stockDetails.name} />
       </div>
       <div className='md:col-span-2 row-span-4'>
-        <Chart tickerHistory={tickerHistory} />
+        <Chart tickerHistory={tickerHistory} period={period} setPeriod={setPeriod} />
       </div>
       <div>
         <Overview
-          symbol={stockSymbol}
+          symbol={ticker}
           price={quote.pc}
           change={quote.d}
           changePercent={quote.dp}
