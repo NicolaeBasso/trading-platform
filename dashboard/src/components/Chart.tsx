@@ -1,69 +1,41 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ChartFilter from './ChartFilter';
-import Card from './Card';
-import { Area, XAxis, YAxis, ResponsiveContainer, AreaChart, Tooltip } from 'recharts';
+import { useContext, useState } from 'react';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { timeFrames } from '../constants/config';
+import { TickerCandle } from '../constants/types';
+import QuoteTypeContext from '../contexts/QuoteTypeContext';
 import ThemeContext from '../contexts/ThemeContext';
 import TickerContext from '../contexts/TickerContext';
-import { fetchHistoricalData } from '../utils/api/stock-api';
-import {
-  createDate,
-  convertDateToUnixTimestamp,
-  convertUnixTimestampToDate,
-} from '../utils/helpers/date-helper';
-import { chartConfig, timeFrames } from '../constants/config';
+import { convertUnixTimestampToDate } from '../utils/helpers/date-helper';
+import Card from './Card';
+import ChartFilter from './ChartFilter';
+import { Button } from '@mantine/core';
 
 const Chart = (props) => {
   const { darkMode } = useContext(ThemeContext);
   const { ticker } = useContext(TickerContext);
+  // const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
 
-  const { tickerHistory, period, setPeriod } = props;
+  const { tickerHistory, period, setPeriod, quoteType } = props;
   const [data, setData] = useState([]);
 
-  const formatData = (data) => {
-    return data.c.map((item, index) => {
-      return {
-        value: item.toFixed(2),
-        date: convertUnixTimestampToDate(data.t[index]),
-      };
-    });
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const { payload: element }: { payload: TickerCandle } = payload[0];
+
+      return (
+        <div style={{ padding: '10px', border: 'none' }}>
+          <p>Date UTC {element.snapshotTimeUTC}</p>
+          <p>Open: {element.closePrice[quoteType]}</p>
+          <p>Close: {element.openPrice[quoteType]}</p>
+          <p>Low: {element.lowPrice[quoteType]}</p>
+          <p>High: {element.lowPrice[quoteType]}</p>
+          <p>Volume: {element.lastTradedVolume}</p>
+        </div>
+      );
+    }
+
+    return null;
   };
-
-  useEffect(() => {
-    const getDateRange = () => {
-      const { days, weeks, months, years } = chartConfig[period];
-
-      const endDate = new Date();
-      const startDate = createDate(endDate, -days, -weeks, -months, -years);
-
-      const startTimestampUnix = convertDateToUnixTimestamp(startDate);
-      const endTimestampUnix = convertDateToUnixTimestamp(endDate);
-      return { startTimestampUnix, endTimestampUnix };
-    };
-
-    const updateChartData = async () => {
-      try {
-        const { startTimestampUnix, endTimestampUnix } = getDateRange();
-        const resolution = chartConfig[period].resolution;
-        const result = await fetchHistoricalData(
-          ticker,
-          resolution,
-          startTimestampUnix,
-          endTimestampUnix,
-        );
-
-        setData(formatData(result));
-        // const data = { c: [100, 200], t: [100, 101] }
-        // setData(formatData(data))
-      } catch (error) {
-        setData([]);
-        console.log(error);
-      }
-    };
-
-    updateChartData();
-  }, [ticker, period]);
-
-  // console.log('AreaChart data = ', data);
 
   return (
     <Card>
@@ -80,11 +52,14 @@ const Chart = (props) => {
           </li>
         ))}
       </ul>
+
       <ResponsiveContainer>
         <AreaChart
           data={tickerHistory.map((el) => ({
-            value: el.closePrice.bid,
+            value: el.closePrice[quoteType],
+            yes: 'yes',
             date: el.snapshotTimeUTC,
+            ...el,
           }))}
         >
           <defs>
@@ -101,16 +76,7 @@ const Chart = (props) => {
               />
             </linearGradient>
           </defs>
-          <Tooltip
-          // content={<div style={{ border: '2px solid #969696' }}>
-          //   <p>Open: 5</p>
-          //   <p>Close: 10</p>
-          //   <p>High: 12</p>
-          //   <p>Low: 3</p>
-          // </div>}
-          // contentStyle={darkMode ? { backgroundColor: "#111827" } : null}
-          // itemStyle={darkMode ? { color: "#818cf8" } : null}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Area
             type='monotone'
             dataKey='value'

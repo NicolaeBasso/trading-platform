@@ -1,21 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ThemeContext from '../contexts/ThemeContext';
-import Overview from './Overview';
-import Details from './Details';
-import Chart from './Chart';
-import Header from './Header';
-import TickerContext from '../contexts/TickerContext';
-import { fetchStockDetails, fetchQuote } from '../utils/api/stock-api';
+import { Title } from '@mantine/core';
+import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { MarketsAPI } from '../api/markets';
 import { timeFrames } from '../constants/config';
+import { TickerCandle } from '../constants/types';
+import QuoteTypeContext from '../contexts/QuoteTypeContext';
+import ThemeContext from '../contexts/ThemeContext';
+import TickerContext from '../contexts/TickerContext';
+import { fetchQuote, fetchStockDetails } from '../utils/api/stock-api';
+import Chart from './Chart';
+import Overview from './Overview';
+import Search from './Search';
 
 const Dashboard = () => {
   const { darkMode } = useContext(ThemeContext);
   const { ticker, setTicker } = useContext(TickerContext);
+  const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
 
   // const [ticker, setTicker] = useState('BTCUSD');
   const [period, setPeriod] = useState(timeFrames.DAY.api);
-  const [tickerHistory, setTickerHistory] = useState([]);
+  const [tickerHistory, setTickerHistory]: [TickerCandle[], SetStateAction<any>] = useState([]);
   const [stockDetails, setStockDetails]: any = useState({});
   const [quote, setQuote]: any = useState({});
 
@@ -52,31 +55,34 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [period]);
+  }, [ticker, period, quoteType]);
 
   return (
-    <div
-      className={`h-screen grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-8 md:grid-rows-7 xl:grid-rows-5 auto-rows-fr gap-6 p-10 font-quicksand ${
-        darkMode ? 'bg-gray-900 text-gray-300' : 'bg-neutral-100'
-      }`}
-    >
-      <div className='col-span-1 md:col-span-2 xl:col-span-3 row-span-1 flex justify-start items-center'>
-        <Header name={stockDetails.name} />
+    <div className='flex flex-col h-screen'>
+      <div id='Ticker' className='flex justify-center items-center p-20'>
+        <div>
+          <Title>{ticker}</Title>
+          <Search />
+        </div>
       </div>
-      <div className='md:col-span-2 row-span-4'>
-        <Chart tickerHistory={tickerHistory} period={period} setPeriod={setPeriod} />
-      </div>
-      <div>
-        <Overview
-          symbol={ticker}
-          price={quote.pc}
-          change={quote.d}
-          changePercent={quote.dp}
-          currency={stockDetails.currency}
-        />
-      </div>
-      <div className='row-span-2 xl:row-span-3'>
-        <Details details={stockDetails} />
+      <div className='flex flex-grow'>
+        <div id='Chart' className='w-3/4'>
+          <Chart
+            tickerHistory={tickerHistory}
+            period={period}
+            setPeriod={setPeriod}
+            quoteType={quoteType}
+          />
+        </div>
+        <div id='Overview' className='w-1/4'>
+          <Overview
+            symbol={ticker}
+            price={quote.pc}
+            change={quote.d}
+            changePercent={quote.dp}
+            currency={stockDetails.currency}
+          />
+        </div>
       </div>
     </div>
   );

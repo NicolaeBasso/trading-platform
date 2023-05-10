@@ -5,6 +5,11 @@ export const chartConfig = {
   '1Y': { resolution: 'D', days: 0, weeks: 0, months: 0, years: 1 },
 };
 
+export enum QuoteType {
+  BID = 'bid',
+  ASK = 'ask',
+}
+
 export const timeFrames = {
   WEEK: { text: '1W', api: 'WEEK' },
   DAY: { text: '1D', api: 'DAY' },
@@ -22,4 +27,10 @@ export const tickers = {
   NATURAL_GAS: 'NATURAL_GAS',
   CRUDE_OIL: 'CRUDE_OIL',
   BTCUSD: 'BTCUSD',
+  ETHUSD: 'ETHUSD',
+  AAPL: 'AAPL',
+  NVDA: 'NVDA',
+  VIX: 'VIX',
 };
+
+export const tickersArr = Object.values(tickers);

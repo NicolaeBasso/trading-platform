@@ -12,13 +12,9 @@ const register = async (body: LoginInterface) => {
 };
 
 const getTickerHistory = async ({ ticker, period }: { ticker: string; period: string }) => {
-  // const res = await axios.get('/auth/login', { data: { ticker, period } });
   const res = await axios.get(`past?ticker=${ticker}&period=${period}`, {
-    // data: { ticker, period },
     baseURL: 'http://localhost:6380',
   });
-
-  console.log(`Ticker ${ticker} period ${period}`, res.data);
 
   return res.data;
 };
