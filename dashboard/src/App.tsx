@@ -17,7 +17,7 @@ export default function App() {
   const [ticker, setTicker] = useState(tickers.BTCUSD);
   const [subscribed, setSubscribed] = useState([
     ticker,
-    // tickers.US100,
+    tickers.US100,
     // tickers.NATURAL_GAS,
   ]);
   const [liveCourse, setLiveCourse] = useState({ [`${ticker}`]: {} });
