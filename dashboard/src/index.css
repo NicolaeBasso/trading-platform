@@ -11,9 +11,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #F7FAFF;
-  font-family: var(--font-family);
+  font-family: var(--font-family) !important;
   box-sizing: border-box;
 }
+
+:root { 
+  --primary-color: #0076c6;
+  --secondary-color: 'red';
+} 
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

@@ -1,23 +1,32 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { clientUrl } from './utils/constants';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    // cors: { origin: clientUrl, credentials: true },
-  });
   const logger = new Logger('Bootstrap');
 
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    credentials: true,
+    preflightContinue: true,
+    methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'],
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.use(helmet());
   app.use(cookieParser());
-  app.use(cors());
+
+  app.use(
+    cors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+      credentials: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Trading Platform Core Service')

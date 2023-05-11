@@ -1,14 +1,11 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { timeFrames } from '../constants/config';
 import { TickerCandle } from '../constants/types';
-import QuoteTypeContext from '../contexts/QuoteTypeContext';
 import ThemeContext from '../contexts/ThemeContext';
 import TickerContext from '../contexts/TickerContext';
-import { convertUnixTimestampToDate } from '../utils/helpers/date-helper';
 import Card from './Card';
 import ChartFilter from './ChartFilter';
-import { Button } from '@mantine/core';
 
 const Chart = (props) => {
   const { darkMode } = useContext(ThemeContext);
@@ -16,7 +13,7 @@ const Chart = (props) => {
   // const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
 
   const { tickerHistory, period, setPeriod, quoteType } = props;
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -37,6 +34,13 @@ const Chart = (props) => {
     return null;
   };
 
+  const data = tickerHistory.map((el, idx, arr) => ({
+    past: idx <= arr.length / 2 ? el.closePrice[quoteType] : null,
+    prediction: idx >= arr.length / 2 ? el.closePrice[quoteType] : null,
+    date: el.snapshotTimeUTC,
+    ...el,
+  }));
+
   return (
     <Card>
       <ul className='flex absolute top-2 right-2 z-40'>
@@ -54,34 +58,39 @@ const Chart = (props) => {
       </ul>
 
       <ResponsiveContainer>
-        <AreaChart
-          data={tickerHistory.map((el) => ({
-            value: el.closePrice[quoteType],
-            yes: 'yes',
-            date: el.snapshotTimeUTC,
-            ...el,
-          }))}
-        >
+        <AreaChart data={data}>
           <defs>
-            <linearGradient id='chartColor' x1='0' y1='0' x2='0' y2='1'>
-              <stop
-                offset='5%'
-                stopColor={darkMode ? '#312e81' : 'rgb(199 210 254)'}
-                stopOpacity={0.8}
-              />
-              <stop
-                offset='95%'
-                stopColor={darkMode ? '#312e81' : 'rgb(199 210 254)'}
-                stopOpacity={0}
-              />
+            <linearGradient id='pastColor' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='5%' stopColor={'#312e81'} stopOpacity={0.8} />
+              <stop offset='95%' stopColor={'#312e81'} stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id='predictionColor' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='5%' stopColor={'red'} stopOpacity={0.8} />
+              <stop offset='95%' stopColor={'red'} stopOpacity={0} />
             </linearGradient>
           </defs>
           <Tooltip content={<CustomTooltip />} />
           <Area
             type='monotone'
-            dataKey='value'
+            dataKey='past'
             stroke='#312e81'
-            fill='url(#chartColor)'
+            fill='url(#pastColor)'
+            // fill={<Customized component={CustomArea} />}
+            // fill={'red'}
+            // fill={CustomArea({ data })}
+            // fill={<Customized component={CustomArea({})} />}
+            fillOpacity={1}
+            strokeWidth={0.5}
+          />
+          <Area
+            type='monotone'
+            dataKey='prediction'
+            stroke='#312e81'
+            fill='url(#predictionColor)'
+            // fill={<Customized component={CustomArea} />}
+            // fill={'red'}
+            // fill={CustomArea({ data })}
+            // fill={<Customized component={CustomArea({})} />}
             fillOpacity={1}
             strokeWidth={0.5}
           />

@@ -26,14 +26,14 @@ export class AuthController {
 
   @Post('login')
   async login(@Request() req, @Response() res, @Body() dto: LoginDto) {
-    this.logger.log(`Login! ${dto.email} ${dto.password}`);
+    this.logger.debug(`Login! ${dto.email} ${dto.password}`);
 
     return this.authService.login(dto, req, res);
   }
 
   @Get('logout')
   logout(@Request() req, @Response() res) {
-    this.logger.log(`Logout! ${req.user.id} ${req.user.email}`);
+    this.logger.debug(`Logout!`);
 
     return this.authService.logout(req, res);
   }

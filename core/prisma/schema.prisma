@@ -26,6 +26,7 @@ model Trade {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
   type TradeType? @default(CFD) 
+  
   isOpen Boolean @default(false)
   pair String @default("BTC/USD")
   leverageRatio Int @default(1)

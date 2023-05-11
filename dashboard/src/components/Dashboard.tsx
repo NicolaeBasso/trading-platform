@@ -1,4 +1,4 @@
-import { Title } from '@mantine/core';
+import { Grid, Image } from '@mantine/core';
 import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { MarketsAPI } from '../api/markets';
 import { timeFrames } from '../constants/config';
@@ -29,18 +29,17 @@ const Dashboard = () => {
         setStockDetails(result);
       } catch (error) {
         setStockDetails({});
-        console.log(error);
+        console.error(error);
       }
     };
 
     const updateStockOverview = async () => {
       try {
         const result = await fetchQuote(ticker);
-        console.log('quote', result);
         setQuote(result);
       } catch (error) {
         setQuote({});
-        console.log(error);
+        console.error(error);
       }
     };
 
@@ -57,34 +56,74 @@ const Dashboard = () => {
     fetchData();
   }, [ticker, period, quoteType]);
 
+  useEffect(() => {
+    MarketsAPI.getAllTrades();
+  }, []);
+
   return (
-    <div className='flex flex-col h-screen'>
-      <div id='Ticker' className='flex justify-center items-center p-20'>
-        <div>
-          <Title>{ticker}</Title>
-          <Search />
+    <>
+      <Grid
+        h={100}
+        justify='space-between'
+        style={{
+          backgroundColor: 'white',
+          margin: '0 0 20px 0',
+          alignContent: 'center',
+          color: 'blue',
+        }}
+      >
+        <Grid.Col span={3} style={{ marginLeft: '20px' }}>
+          Overmind Trading
+        </Grid.Col>
+        <Grid.Col span={3}>
+          <Grid>
+            <Grid.Col span={3} style={{ display: 'flex', flexDirection: 'column' }}>
+              <p>Available</p>
+              <p>Available</p>
+            </Grid.Col>
+            <Grid.Col span={3}>
+              <p>Equity</p>
+              <p>Equity</p>
+            </Grid.Col>
+            <Grid.Col span={3}>
+              <p>Funds</p>
+              <p>Funds</p>
+            </Grid.Col>
+            <Grid.Col span={3}>
+              <p>P&L</p>
+              <p>P&L</p>
+            </Grid.Col>
+          </Grid>
+        </Grid.Col>
+      </Grid>
+      <div className='flex flex-col h-screen'>
+        {/* <div id='Ticker' className='flex justify-center items-center p-20'>
+      <div>
+        <Title>{ticker}</Title>
+        <Search />
+      </div>
+    </div> */}
+        <div className='flex flex-grow' style={{ margin: '20px' }}>
+          <div id='Chart' className='w-3/4'>
+            <Chart
+              tickerHistory={tickerHistory}
+              period={period}
+              setPeriod={setPeriod}
+              quoteType={quoteType}
+            />
+          </div>
+          <div id='Overview' className='w-1/4'>
+            <Overview
+              symbol={ticker}
+              price={quote.pc}
+              change={quote.d}
+              changePercent={quote.dp}
+              currency={stockDetails.currency}
+            />
+          </div>
         </div>
       </div>
-      <div className='flex flex-grow'>
-        <div id='Chart' className='w-3/4'>
-          <Chart
-            tickerHistory={tickerHistory}
-            period={period}
-            setPeriod={setPeriod}
-            quoteType={quoteType}
-          />
-        </div>
-        <div id='Overview' className='w-1/4'>
-          <Overview
-            symbol={ticker}
-            price={quote.pc}
-            change={quote.d}
-            changePercent={quote.dp}
-            currency={stockDetails.currency}
-          />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

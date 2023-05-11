@@ -8,13 +8,18 @@ import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto, Role } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Roles, jwtSecret } from '../utils/constants';
+import { ENV_TYPE, Roles, jwtSecret } from '../utils/constants';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async register(dto: AuthDto) {
     const { email, password } = dto;
@@ -40,7 +45,7 @@ export class AuthService {
     return { message: 'User created succefully', status: HttpStatus.CREATED };
   }
 
-  async login(dto: LoginDto, req: Request, res: Response) {
+  async login(dto: LoginDto, req: Request, res: Response): Promise<any> {
     const { email, password } = dto;
     console.log(email);
 
@@ -73,9 +78,23 @@ export class AuthService {
       throw new ForbiddenException('Could not login');
     }
 
-    res.cookie('token', token, {});
-
-    return res.send({ message: 'Logged in succefully', status: HttpStatus.OK });
+    return req.res
+      .cookie('token', token, {
+        httpOnly: true,
+        sameSite:
+          this.configService.get<string>('ENV') === ENV_TYPE.LOCAL
+            ? 'lax'
+            : 'none',
+        secure:
+          this.configService.get<string>('ENV') === ENV_TYPE.LOCAL
+            ? false
+            : true,
+      })
+      .req.res.cookie('jwt', token)
+      .send({
+        message: 'Logged in succefully',
+        status: HttpStatus.OK,
+      });
   }
 
   async removeAllUsers(res: Response) {
@@ -86,6 +105,7 @@ export class AuthService {
 
   async logout(req: Request, res: Response) {
     res.clearCookie('token');
+    res.clearCookie('jwt');
 
     return res.send({ message: 'Logged out succefully' });
   }

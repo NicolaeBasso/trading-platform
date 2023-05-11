@@ -70,7 +70,7 @@ export class CapitalComGateway {
       if (pairsRequested.includes(ticker[0])) toSend[ticker[0]] = ticker[1];
     });
 
-    console.log('toSend', toSend);
+    // console.log('toSend', toSend);
 
     return {
       event,

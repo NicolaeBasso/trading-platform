@@ -31,11 +31,14 @@ export class RolesGuard implements CanActivate {
         ROLES_KEY,
         [context.getHandler(), context.getClass()],
       );
+      this.logger.debug('requiredRoles', requiredRoles);
       if (!requiredRoles) {
         return true;
       }
       const req = context.switchToHttp().getRequest();
       const token = req.cookies?.token;
+
+      this.logger.debug('token', token);
 
       if (!token) {
         throw new UnauthorizedException({ message: 'Unauthorized' });

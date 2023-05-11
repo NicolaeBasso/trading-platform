@@ -19,22 +19,15 @@ const getTickerHistory = async ({ ticker, period }: { ticker: string; period: st
   return res.data;
 };
 
-const logout = async () => {
-  const res = await axios.delete('/auth/logout', {});
+const getAllTrades = async () => {
+  const res = await axios.get('trades/all');
+
+  console.log('getAllTrades', res);
 
   return res.data;
 };
 
-const forgotPassword = async (body: ForgotPasswordInterface) => {
-  const res = await axios.post('/auth/forgot-password', body, { withCredentials: true });
-
-  return res;
+export const MarketsAPI = {
+  getTickerHistory,
+  getAllTrades,
 };
-
-const resetPassword = async (body: ResetPasswordInterface) => {
-  const res = await axios.post('/auth/reset-password', body, { withCredentials: true });
-
-  return res;
-};
-
-export const MarketsAPI = { getTickerHistory, register, logout, resetPassword, forgotPassword };
