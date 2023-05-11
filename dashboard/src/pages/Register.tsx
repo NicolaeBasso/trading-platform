@@ -7,14 +7,9 @@ export const Register = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     AuthAPI.register(form).then((result) => {
-      console.log(result);
       const { status } = result;
       if (status === 201) navigate('/login');
     });

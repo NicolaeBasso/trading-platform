@@ -1,52 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { MantineProvider, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Dashboard from './components/Dashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
-import { MantineProvider, Text } from '@mantine/core';
-import { Dashboard as AnyChartDashboard } from './pages/Dashboard';
-import Dashboard from './components/Dashboard';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { io } from 'socket.io-client';
+import { QuoteType, tickers } from './constants/config';
+import LiveCourseContext from './contexts/LiveCourseContext';
 import ThemeContext from './contexts/ThemeContext';
-import StockContext from './contexts/StockContext';
+import TickerContext from './contexts/TickerContext';
+import QuoteTypeContext from './contexts/QuoteTypeContext';
 
 export default function App() {
-  // const [btcUsd, setBtcUsd] = useState(null);
-  const [pairs, setPairs] = useState({});
   const [darkMode, setDarkMode] = useState(false);
-  const [stockSymbol, setStockSymbol] = useState('FB');
+  const [ticker, setTicker] = useState(tickers.BTCUSD);
+  const [quoteType, setQuoteType] = useState(QuoteType.ASK);
+  const [subscribed, setSubscribed] = useState([
+    ticker,
+    tickers.US100,
+    // tickers.NATURAL_GAS,
+  ]);
+  const [liveCourse, setLiveCourse] = useState({ [`${ticker}`]: {} });
 
   useEffect(() => {
-    console.log('Effect');
-
     const socket = io('ws://localhost:5555/market', {
       transports: ['websocket', 'polling'],
     });
 
     socket.on('connect', () => {
-      console.log('WebSocket connection established.');
+      console.info('WebSocket connection established.');
       const message = { message: 'client' };
-      // socket.send(JSON.stringify(message));
+
       socket.emit('events', message);
       socket.emit('course');
     });
 
-    socket.on('events', (event) => {
-      console.log(`Received message: ${event.data}`);
-    });
-
     socket.on('course', (event) => {
-      console.log('Received message:', event);
-      setPairs(event.pairs);
+      setLiveCourse(event.pairs);
     });
 
     socket.on('disconnect', () => {
-      console.log('WebSocket connection closed.');
+      console.info('WebSocket connection closed.');
     });
 
     const interval = setInterval(() => {
-      socket.emit('course', { pair: 'BTCUSD' });
+      socket.emit('course', { pairs: subscribed });
     }, 300);
 
     return () => {
@@ -55,9 +55,7 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(pairs);
-  }, [pairs]);
+  useEffect(() => {}, [liveCourse]);
 
   const router = (
     <Routes>
@@ -68,24 +66,24 @@ export default function App() {
     </Routes>
   );
 
-  console.log(Object.entries(pairs));
-
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
-        <StockContext.Provider value={{ stockSymbol, setStockSymbol }}>
-          {router}
-          {Object.entries(pairs).map((pair: any) => {
-            return (
-              <Text size={'xl'} key={pair[0]}>
-                {pair[0]}
-                {JSON.stringify(pair[1])}
-              </Text>
-            );
-          })}
-          {/* <Dashboard /> */}
-          <AnyChartDashboard />
-        </StockContext.Provider>
+        <LiveCourseContext.Provider value={{ liveCourse, setLiveCourse }}>
+          <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
+            <TickerContext.Provider value={{ ticker, setTicker }}>
+              {router}
+              {Object.entries(liveCourse).map((ticker: any[]) => {
+                return (
+                  <Text size={'xl'} key={ticker[0]}>
+                    {ticker[0]}
+                    {JSON.stringify(ticker[1])}
+                  </Text>
+                );
+              })}
+            </TickerContext.Provider>
+          </QuoteTypeContext.Provider>
+        </LiveCourseContext.Provider>
       </ThemeContext.Provider>
     </MantineProvider>
   );

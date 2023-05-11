@@ -8,8 +8,6 @@ import { AuthAPI } from '../api/auth';
 import 'anychart';
 
 export const Dashboard = () => {
-  console.log('MOUNT');
-
   const [form, setForm] = useState({ email: '', password: '' });
   const [isChart, setIsChart] = useState(false);
 
@@ -97,9 +95,7 @@ export const Dashboard = () => {
   });
   //
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
+  useEffect(() => {}, [form]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

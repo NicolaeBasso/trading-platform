@@ -40,6 +40,7 @@ export class TradesController {
   }
 
   @RolesDecorator(Roles.USER)
+  @UseGuards(RolesGuard)
   @Get('all')
   findAll() {
     return this.tradeService.findAll();

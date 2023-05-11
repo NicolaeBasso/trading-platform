@@ -1,113 +1,96 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ChartFilter from './ChartFilter';
-import Card from './Card';
-import { Area, XAxis, YAxis, ResponsiveContainer, AreaChart, Tooltip } from 'recharts';
+import { useContext } from 'react';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { timeFrames } from '../constants/config';
+import { TickerCandle } from '../constants/types';
 import ThemeContext from '../contexts/ThemeContext';
-import StockContext from '../contexts/StockContext';
-import { fetchHistoricalData } from '../utils/api/stock-api';
-import {
-  createDate,
-  convertDateToUnixTimestamp,
-  convertUnixTimestampToDate,
-} from '../utils/helpers/date-helper';
-import { chartConfig } from '../constants/config';
+import TickerContext from '../contexts/TickerContext';
+import Card from './Card';
+import ChartFilter from './ChartFilter';
 
-const Chart = () => {
+const Chart = (props) => {
   const { darkMode } = useContext(ThemeContext);
-  const { stockSymbol } = useContext(StockContext);
+  const { ticker } = useContext(TickerContext);
+  // const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
 
-  const [filter, setFilter] = useState('1Y');
-  const [data, setData] = useState([]);
+  const { tickerHistory, period, setPeriod, quoteType } = props;
+  // const [data, setData] = useState([]);
 
-  const formatData = (data) => {
-    return data.c.map((item, index) => {
-      return {
-        value: item.toFixed(2),
-        date: convertUnixTimestampToDate(data.t[index]),
-      };
-    });
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const { payload: element }: { payload: TickerCandle } = payload[0];
+
+      return (
+        <div style={{ padding: '10px', border: 'none' }}>
+          <p>Date UTC {element.snapshotTimeUTC}</p>
+          <p>Open: {element.closePrice[quoteType]}</p>
+          <p>Close: {element.openPrice[quoteType]}</p>
+          <p>Low: {element.lowPrice[quoteType]}</p>
+          <p>High: {element.lowPrice[quoteType]}</p>
+          <p>Volume: {element.lastTradedVolume}</p>
+        </div>
+      );
+    }
+
+    return null;
   };
 
-  useEffect(() => {
-    const getDateRange = () => {
-      const { days, weeks, months, years } = chartConfig[filter];
-
-      const endDate = new Date();
-      const startDate = createDate(endDate, -days, -weeks, -months, -years);
-
-      const startTimestampUnix = convertDateToUnixTimestamp(startDate);
-      const endTimestampUnix = convertDateToUnixTimestamp(endDate);
-      return { startTimestampUnix, endTimestampUnix };
-    };
-
-    const updateChartData = async () => {
-      try {
-        const { startTimestampUnix, endTimestampUnix } = getDateRange();
-        const resolution = chartConfig[filter].resolution;
-        const result = await fetchHistoricalData(
-          stockSymbol,
-          resolution,
-          startTimestampUnix,
-          endTimestampUnix,
-        );
-        setData(formatData(result));
-        // const data = { c: [100, 200], t: [100, 101] }
-        // setData(formatData(data))
-      } catch (error) {
-        setData([]);
-        console.log(error);
-      }
-    };
-
-    updateChartData();
-  }, [stockSymbol, filter]);
+  const data = tickerHistory.map((el, idx, arr) => ({
+    past: idx <= arr.length / 2 ? el.closePrice[quoteType] : null,
+    prediction: idx >= arr.length / 2 ? el.closePrice[quoteType] : null,
+    date: el.snapshotTimeUTC,
+    ...el,
+  }));
 
   return (
     <Card>
       <ul className='flex absolute top-2 right-2 z-40'>
-        {Object.keys(chartConfig).map((item) => (
-          <li key={item}>
+        {Object.keys(timeFrames).map((el, idx, arr) => (
+          <li key={el}>
             <ChartFilter
-              text={item}
-              active={filter === item}
+              text={timeFrames[el].text}
+              active={period === el}
               onClick={() => {
-                setFilter(item);
+                setPeriod(timeFrames[el].api);
               }}
             />
           </li>
         ))}
       </ul>
+
       <ResponsiveContainer>
         <AreaChart data={data}>
           <defs>
-            <linearGradient id='chartColor' x1='0' y1='0' x2='0' y2='1'>
-              <stop
-                offset='5%'
-                stopColor={darkMode ? '#312e81' : 'rgb(199 210 254)'}
-                stopOpacity={0.8}
-              />
-              <stop
-                offset='95%'
-                stopColor={darkMode ? '#312e81' : 'rgb(199 210 254)'}
-                stopOpacity={0}
-              />
+            <linearGradient id='pastColor' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='5%' stopColor={'#312e81'} stopOpacity={0.8} />
+              <stop offset='95%' stopColor={'#312e81'} stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id='predictionColor' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='5%' stopColor={'red'} stopOpacity={0.8} />
+              <stop offset='95%' stopColor={'red'} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <Tooltip
-          // content={<div style={{ border: '2px solid #969696' }}>
-          //   <p>Open: 5</p>
-          //   <p>Close: 10</p>
-          //   <p>High: 12</p>
-          //   <p>Low: 3</p>
-          // </div>}
-          // contentStyle={darkMode ? { backgroundColor: "#111827" } : null}
-          // itemStyle={darkMode ? { color: "#818cf8" } : null}
+          <Tooltip content={<CustomTooltip />} />
+          <Area
+            type='monotone'
+            dataKey='past'
+            stroke='#312e81'
+            fill='url(#pastColor)'
+            // fill={<Customized component={CustomArea} />}
+            // fill={'red'}
+            // fill={CustomArea({ data })}
+            // fill={<Customized component={CustomArea({})} />}
+            fillOpacity={1}
+            strokeWidth={0.5}
           />
           <Area
             type='monotone'
-            dataKey='value'
+            dataKey='prediction'
             stroke='#312e81'
-            fill='url(#chartColor)'
+            fill='url(#predictionColor)'
+            // fill={<Customized component={CustomArea} />}
+            // fill={'red'}
+            // fill={CustomArea({ data })}
+            // fill={<Customized component={CustomArea({})} />}
             fillOpacity={1}
             strokeWidth={0.5}
           />
