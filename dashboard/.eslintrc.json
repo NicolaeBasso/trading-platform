@@ -24,7 +24,9 @@
     },
     "ecmaVersion": 2022,
     "sourceType": "module",
-    "tsconfigRootDir": "/users/nbasso/utm/vii/pad/trading platform/trading-platform/dashboard",
+    "tsconfigRootDir": "./",
+    // "tsconfigRootDir": "/users/nbasso/utm/vii/pad/trading platform/trading-platform/dashboard",
+    // "tsconfigRootDir": "./",
     "project": "tsconfig.json"
   },
   "plugins": ["react", "@typescript-eslint", "react-hooks", "prettier", "jest"],

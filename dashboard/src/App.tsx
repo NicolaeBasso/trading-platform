@@ -1,6 +1,6 @@
 import { MantineProvider, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -12,16 +12,22 @@ import LiveCourseContext from './contexts/LiveCourseContext';
 import ThemeContext from './contexts/ThemeContext';
 import TickerContext from './contexts/TickerContext';
 import QuoteTypeContext from './contexts/QuoteTypeContext';
+import UserContext from './contexts/UserContext';
 
 export default function App() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  console.log('user', user);
+
+  useEffect(() => {
+    if (!localStorage.getItem('jwt') || !user) navigate('/login');
+  }, [localStorage.getItem('jwt'), user]);
+
   const [darkMode, setDarkMode] = useState(false);
   const [ticker, setTicker] = useState(tickers.BTCUSD);
   const [quoteType, setQuoteType] = useState(QuoteType.ASK);
-  const [subscribed, setSubscribed] = useState([
-    ticker,
-    tickers.US100,
-    // tickers.NATURAL_GAS,
-  ]);
+  const [subscribed, setSubscribed] = useState([ticker, tickers.US100]);
   const [liveCourse, setLiveCourse] = useState({ [`${ticker}`]: {} });
 
   useEffect(() => {
@@ -59,7 +65,7 @@ export default function App() {
 
   const router = (
     <Routes>
-      <Route path='*' element={<Dashboard />} />
+      <Route path='*' element={<Login />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/dashboard' element={<Dashboard />} />
@@ -69,21 +75,23 @@ export default function App() {
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
-        <LiveCourseContext.Provider value={{ liveCourse, setLiveCourse }}>
-          <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
-            <TickerContext.Provider value={{ ticker, setTicker }}>
-              {router}
-              {Object.entries(liveCourse).map((ticker: any[]) => {
-                return (
-                  <Text size={'xl'} key={ticker[0]}>
-                    {ticker[0]}
-                    {JSON.stringify(ticker[1])}
-                  </Text>
-                );
-              })}
-            </TickerContext.Provider>
-          </QuoteTypeContext.Provider>
-        </LiveCourseContext.Provider>
+        <UserContext.Provider value={{ user, setUser }}>
+          <LiveCourseContext.Provider value={{ liveCourse, setLiveCourse }}>
+            <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
+              <TickerContext.Provider value={{ ticker, setTicker }}>
+                {router}
+                {Object.entries(liveCourse).map((ticker: any[]) => {
+                  return (
+                    <Text size={'xl'} key={ticker[0]}>
+                      {ticker[0]}
+                      {JSON.stringify(ticker[1])}
+                    </Text>
+                  );
+                })}
+              </TickerContext.Provider>
+            </QuoteTypeContext.Provider>
+          </LiveCourseContext.Provider>
+        </UserContext.Provider>
       </ThemeContext.Provider>
     </MantineProvider>
   );

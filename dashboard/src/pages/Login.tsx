@@ -1,17 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Input, Paper, Text } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthAPI } from '../api/auth';
+import UserContext from '../contexts/UserContext';
+import jwt_decode from 'jwt-decode';
 
 export const Login = () => {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
+
+  if (localStorage.getItem('jwt')) navigate('/dashboard');
+
+  useEffect(() => {
+    if (localStorage.getItem('jwt') || user) navigate('/dashboard');
+  }, [user, localStorage.getItem('jwt')]);
+
+  const [form, setForm] = useState({ email: '', password: '' });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     AuthAPI.login(form).then((result) => {
       const { status } = result;
-      if (status === 200) navigate('/dashboard');
+      const cookie = document.cookie;
+      const jwtEncoded = cookie.substring(4);
+
+      if ([200, 201].includes(status)) {
+        const jwtDecoded = jwt_decode(jwtEncoded);
+        localStorage.setItem('jwt', jwtEncoded);
+        navigate('/dashboard');
+        setUser(jwtDecoded);
+      }
     });
   };
 
