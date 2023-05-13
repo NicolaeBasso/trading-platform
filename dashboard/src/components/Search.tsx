@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import ThemeContext from '../contexts/ThemeContext';
-import { searchSymbol } from '../utils/api/stock-api';
 import SearchResults from './SearchResults';
 import { SearchIcon, XIcon } from '@heroicons/react/solid';
 import { Select } from '@mantine/core';

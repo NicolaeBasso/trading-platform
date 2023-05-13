@@ -9,11 +9,15 @@ export const Login = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  if (localStorage.getItem('jwt')) navigate('/dashboard');
-
   useEffect(() => {
-    if (localStorage.getItem('jwt') || user) navigate('/dashboard');
-  }, [user, localStorage.getItem('jwt')]);
+    const localStorageJwt = localStorage.getItem('jwt');
+    if (localStorageJwt && user) navigate('/dashboard');
+
+    if (!user && localStorageJwt) {
+      const jwtDecoded = jwt_decode(localStorageJwt);
+      setUser(jwtDecoded);
+    }
+  }, [user, localStorage]);
 
   const [form, setForm] = useState({ email: '', password: '' });
 
@@ -27,8 +31,8 @@ export const Login = () => {
       if ([200, 201].includes(status)) {
         const jwtDecoded = jwt_decode(jwtEncoded);
         localStorage.setItem('jwt', jwtEncoded);
-        navigate('/dashboard');
         setUser(jwtDecoded);
+        navigate('/dashboard');
       }
     });
   };
@@ -66,7 +70,10 @@ export const Login = () => {
           </Button>
         </form>
         <div style={{ marginTop: 20 }}>
-          Don't have an account? <Link to='/register'>Register here</Link>
+          Don't have an account?{' '}
+          <Link to='/register' style={{ textDecoration: 'underline', color: '#228be6' }}>
+            Register here
+          </Link>
         </div>
       </Paper>
     </div>

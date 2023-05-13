@@ -45,7 +45,10 @@ export const Register = () => {
           </Button>
         </form>
         <div style={{ marginTop: 20 }}>
-          Already have an account? <Link to='/login'>Login here</Link>
+          Already have an account?{' '}
+          <Link to='/login' style={{ textDecoration: 'underline', color: '#228be6' }}>
+            Login here
+          </Link>
         </div>
       </Paper>
     </div>

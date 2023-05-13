@@ -1,34 +1,35 @@
-import { MantineProvider, Text } from '@mantine/core';
-import { useContext, useEffect, useState } from 'react';
+import { MantineProvider } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
-
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { io } from 'socket.io-client';
 import { QuoteType, tickers } from './constants/config';
 import LiveCourseContext from './contexts/LiveCourseContext';
+import QuoteTypeContext from './contexts/QuoteTypeContext';
 import ThemeContext from './contexts/ThemeContext';
 import TickerContext from './contexts/TickerContext';
-import QuoteTypeContext from './contexts/QuoteTypeContext';
 import UserContext from './contexts/UserContext';
+import UserDetailsContext from './contexts/UserDetailsContext';
 
 export default function App() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
 
-  console.log('user', user);
+  // console.log('user', user);
 
   useEffect(() => {
     if (!localStorage.getItem('jwt') || !user) navigate('/login');
-  }, [localStorage.getItem('jwt'), user]);
+  }, [localStorage, user]);
 
   const [darkMode, setDarkMode] = useState(false);
   const [ticker, setTicker] = useState(tickers.BTCUSD);
   const [quoteType, setQuoteType] = useState(QuoteType.ASK);
   const [subscribed, setSubscribed] = useState([ticker, tickers.US100]);
-  const [liveCourse, setLiveCourse] = useState({ [`${ticker}`]: {} });
+  const [course, setCourse] = useState({ [`${ticker}`]: { live: {}, previous: {} } });
 
   useEffect(() => {
     const socket = io('ws://localhost:5555/market', {
@@ -44,7 +45,10 @@ export default function App() {
     });
 
     socket.on('course', (event) => {
-      setLiveCourse(event.pairs);
+      setCourse((previousValue: any) => {
+        // console.log('previousValue', previousValue);
+        return { live: event.pairs, previous: previousValue.live };
+      });
     });
 
     socket.on('disconnect', () => {
@@ -61,7 +65,7 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {}, [liveCourse]);
+  useEffect(() => {}, [course]);
 
   const router = (
     <Routes>
@@ -76,21 +80,15 @@ export default function App() {
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
         <UserContext.Provider value={{ user, setUser }}>
-          <LiveCourseContext.Provider value={{ liveCourse, setLiveCourse }}>
-            <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
-              <TickerContext.Provider value={{ ticker, setTicker }}>
-                {router}
-                {Object.entries(liveCourse).map((ticker: any[]) => {
-                  return (
-                    <Text size={'xl'} key={ticker[0]}>
-                      {ticker[0]}
-                      {JSON.stringify(ticker[1])}
-                    </Text>
-                  );
-                })}
-              </TickerContext.Provider>
-            </QuoteTypeContext.Provider>
-          </LiveCourseContext.Provider>
+          <UserDetailsContext.Provider value={{ userDetails, setUserDetails }}>
+            <LiveCourseContext.Provider value={{ course, setCourse }}>
+              <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
+                <TickerContext.Provider value={{ ticker, setTicker }}>
+                  {router}
+                </TickerContext.Provider>
+              </QuoteTypeContext.Provider>
+            </LiveCourseContext.Provider>
+          </UserDetailsContext.Provider>
         </UserContext.Provider>
       </ThemeContext.Provider>
     </MantineProvider>

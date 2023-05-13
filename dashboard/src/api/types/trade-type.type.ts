@@ -1,6 +1,6 @@
-import { TradeType } from '../types/trade-type.type';
+export type TradeType = 'CFD' | 'OPTIONS' | 'STOCKS';
 
-export class Trade {
+export type Trade = {
   id: string;
   createdAt: number;
   updatedAt: number;
@@ -18,4 +18,4 @@ export class Trade {
   takeProfit: number;
   overnightInterest: number;
   overnightFee: number;
-}
+};

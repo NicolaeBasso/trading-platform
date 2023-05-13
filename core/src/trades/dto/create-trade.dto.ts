@@ -6,8 +6,13 @@ export class CreateTradeDto {
   @IsString()
   type?: TradeType;
 
+  @IsOptional()
   @IsBoolean()
-  isOpen: boolean;
+  isOpen?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isLong?: boolean;
 
   @IsString()
   pair: string;

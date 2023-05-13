@@ -8,19 +8,14 @@ import Card from './Card';
 import ChartFilter from './ChartFilter';
 
 const Chart = (props) => {
-  const { darkMode } = useContext(ThemeContext);
-  const { ticker } = useContext(TickerContext);
-  // const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
-
   const { tickerHistory, period, setPeriod, quoteType } = props;
-  // const [data, setData] = useState([]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const { payload: element }: { payload: TickerCandle } = payload[0];
 
       return (
-        <div style={{ padding: '10px', border: 'none' }}>
+        <div style={{ padding: '10px', border: 'none !important' }}>
           <p>Date UTC {element.snapshotTimeUTC}</p>
           <p>Open: {element.closePrice[quoteType]}</p>
           <p>Close: {element.openPrice[quoteType]}</p>
@@ -75,10 +70,6 @@ const Chart = (props) => {
             dataKey='past'
             stroke='#312e81'
             fill='url(#pastColor)'
-            // fill={<Customized component={CustomArea} />}
-            // fill={'red'}
-            // fill={CustomArea({ data })}
-            // fill={<Customized component={CustomArea({})} />}
             fillOpacity={1}
             strokeWidth={0.5}
           />
@@ -87,10 +78,6 @@ const Chart = (props) => {
             dataKey='prediction'
             stroke='#312e81'
             fill='url(#predictionColor)'
-            // fill={<Customized component={CustomArea} />}
-            // fill={'red'}
-            // fill={CustomArea({ data })}
-            // fill={<Customized component={CustomArea({})} />}
             fillOpacity={1}
             strokeWidth={0.5}
           />
