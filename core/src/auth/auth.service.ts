@@ -4,14 +4,14 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
-import { AuthDto, Role } from './dto/auth.dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { ENV_TYPE, Roles, jwtSecret } from '../utils/constants';
-import { Request, Response } from 'express';
-import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
+import { PrismaService } from 'prisma/prisma.service';
+import { ENV_TYPE, jwtSecret } from '../utils/constants';
+import { AuthDto, Role } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -103,11 +103,11 @@ export class AuthService {
     return res.send({ message: 'All users deleted' });
   }
 
-  async logout(req: Request, res: Response) {
-    res.clearCookie('token');
-    res.clearCookie('jwt');
+  async logout(req: Request) {
+    req.res.clearCookie('token');
+    req.res.clearCookie('jwt');
 
-    return res.send({ message: 'Logged out succefully' });
+    return req.res.send({ message: 'Logged out succefully' });
   }
 
   async hashPassword(password: string) {

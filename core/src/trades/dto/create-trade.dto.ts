@@ -17,6 +17,10 @@ export class CreateTradeDto {
   @IsString()
   pair: string;
 
+  @IsOptional()
+  @IsNumber()
+  leverageRatio: number;
+
   @IsNumber()
   tradeSize: number;
 }

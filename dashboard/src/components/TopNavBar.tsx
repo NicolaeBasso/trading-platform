@@ -16,21 +16,25 @@ export const TopNavBar = ({ setUser }) => {
       }}
     >
       <Grid.Col span={3}>Overmind Trading</Grid.Col>
-      <Grid.Col span={5}>
+      <Grid.Col span={7}>
         <Grid>
-          <Grid.Col span={3}>
-            <p>Available</p>
-            <p>Available</p>
+          <Grid.Col span={2}>
+            <p>Funds</p>
+            <p>Funds</p>
           </Grid.Col>
           <Grid.Col span={2}>
             <p>Equity</p>
             <p>Equity</p>
           </Grid.Col>
           <Grid.Col span={2}>
-            <p>Funds</p>
-            <p>Funds</p>
+            <p>Available</p>
+            <p>Available</p>
           </Grid.Col>
           <Grid.Col span={2}>
+            <p>Margin</p>
+            <p>Margin</p>
+          </Grid.Col>
+          <Grid.Col span={1}>
             <p>P&L</p>
             <p>P&L</p>
           </Grid.Col>

@@ -42,7 +42,7 @@ export default function App() {
     });
 
     socket.on('connect', () => {
-      console.info('WebSocket connection established.');
+      console.info('WebSocket connection to /market established.');
       const message = { message: 'client' };
 
       socket.emit('events', message);
@@ -61,7 +61,7 @@ export default function App() {
     });
 
     socket.on('disconnect', () => {
-      console.info('WebSocket connection closed.');
+      console.info('WebSocket connection to /market closed.');
     });
 
     const interval = setInterval(() => {
@@ -80,7 +80,7 @@ export default function App() {
     });
 
     socket.on('connect', () => {
-      console.info('WebSocket connection established.');
+      console.info('WebSocket connection to /account established.');
       const message = { message: 'Connect to /account' };
 
       socket.emit('balance');
@@ -98,11 +98,11 @@ export default function App() {
     });
 
     socket.on('disconnect', () => {
-      console.info('WebSocket connection closed.');
+      console.info('WebSocket connection to /market closed.');
     });
 
     const interval = setInterval(() => {
-      socket.emit('course', { pairs: subscribed });
+      socket.emit('balance');
     }, 300);
 
     return () => {

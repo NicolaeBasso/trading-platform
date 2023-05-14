@@ -16,7 +16,12 @@ export class TradeService {
   ) {}
 
   async create(createTradeDto: CreateTradeDto) {
-    const { pair, tradeSize, isLong = false } = createTradeDto;
+    const {
+      pair,
+      tradeSize,
+      isLong = true,
+      leverageRatio = 100,
+    } = createTradeDto;
 
     console.log(pair, tradeSize);
     console.log(`Subscriptions`, this.capitalComGateway.subscriptions);
@@ -39,6 +44,9 @@ export class TradeService {
         isOpen: true,
         isLong,
         priceOpened: priceOpened,
+        leverageRatio,
+        marginSize: (priceOpened / leverageRatio) * tradeSize,
+        leverageSize: priceOpened * leverageRatio * tradeSize,
         overnightInterest: 0.15,
         overnightFee: 0.1,
         ...createTradeDto,
@@ -51,9 +59,11 @@ export class TradeService {
   async findAll(getAllTradesDto): Promise<Trade[] & any> {
     const { filter } = getAllTradesDto;
 
-    return this.prisma.trade.findMany({
-      where: { isOpen: filter === 'open' ? true : false },
-    });
+    if (filter === 'all') return this.prisma.trade.findMany({});
+    else
+      return this.prisma.trade.findMany({
+        where: { isOpen: filter === 'open' ? true : false },
+      });
   }
 
   async findOne(id: string) {

@@ -1,9 +1,6 @@
-import { useContext } from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { timeFrames } from '../constants/config';
 import { TickerCandle } from '../constants/types';
-import ThemeContext from '../contexts/ThemeContext';
-import TickerContext from '../contexts/TickerContext';
 import Card from './Card';
 import ChartFilter from './ChartFilter';
 
@@ -17,10 +14,10 @@ const Chart = (props) => {
       return (
         <div style={{ padding: '10px', border: 'none !important' }}>
           <p>Date UTC {element.snapshotTimeUTC}</p>
-          <p>Open: {element.closePrice[quoteType]}</p>
-          <p>Close: {element.openPrice[quoteType]}</p>
+          <p>Close: {element.closePrice[quoteType]}</p>
+          <p>Open: {element.openPrice[quoteType]}</p>
           <p>Low: {element.lowPrice[quoteType]}</p>
-          <p>High: {element.lowPrice[quoteType]}</p>
+          <p>High: {element.highPrice[quoteType]}</p>
           <p>Volume: {element.lastTradedVolume}</p>
         </div>
       );

@@ -27,6 +27,7 @@ const Overview = ({
   const [previousBid, setPreviousBid] = useState(tickerPrevious?.bid);
   const [currentBid, setCurrentBid] = useState(tickerLive?.bid);
   const [bidColor, setBidColor] = useState({ color: '#228be6' });
+  const [tradeSize, setTradeSize] = useState(10);
 
   useEffect(() => {
     setPreviousBid(course.previous?.[ticker]?.bid);
@@ -39,8 +40,8 @@ const Overview = ({
     return QuoteType.ASK;
   };
 
-  const openTrade = async (isLong = true) => {
-    TradesAPI.openTrade({ isLong, tradeSize: 10, pair: 'BTCUSD' });
+  const openTrade = async ({ isLong = true, tradeSize = 10 }) => {
+    TradesAPI.openTrade({ isLong, tradeSize, pair: 'BTCUSD' });
     fetchUserDetails();
   };
 
@@ -109,13 +110,21 @@ const Overview = ({
         Ask: {tickerLive?.ofr}
       </p>
       <p>Spread: {tickerLive?.ofr - tickerLive?.bid}</p>
-      <NumberInput hideControls label='Enter position size' style={{ margin: '20px 0' }} />
+      <NumberInput
+        hideControls
+        label='Position size'
+        style={{ margin: '20px 0' }}
+        value={tradeSize}
+        onChange={(value: any) => {
+          setTradeSize(value);
+        }}
+      />
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           size='xl'
           style={{ backgroundColor: '#228be6', minWidth: '150px' }}
           onClick={() => {
-            openTrade(true);
+            openTrade({ tradeSize });
           }}
         >
           LONG
@@ -124,7 +133,7 @@ const Overview = ({
           size='xl'
           style={{ backgroundColor: 'red', minWidth: '150px' }}
           onClick={() => {
-            openTrade(false);
+            openTrade({ tradeSize });
           }}
         >
           SHORT
