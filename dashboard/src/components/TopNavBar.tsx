@@ -1,9 +1,17 @@
 import { Grid, Button } from '@mantine/core';
 import { logoutIcon } from '../assets/icons/logout';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import AccountBalanceContext from '../contexts/AccountBalanceContext';
 
 export const TopNavBar = ({ setUser }) => {
   const navigate = useNavigate();
+
+  const { accountBalance, setAccountBalance } = useContext(AccountBalanceContext);
+  const { funds, equity, available, margin, profit } = accountBalance.live;
+
+  console.log('funds', funds);
+  console.log('accountBalance', accountBalance);
 
   return (
     <Grid
@@ -16,30 +24,30 @@ export const TopNavBar = ({ setUser }) => {
       }}
     >
       <Grid.Col span={3}>Overmind Trading</Grid.Col>
-      <Grid.Col span={7}>
+      <Grid.Col span={8}>
         <Grid>
           <Grid.Col span={2}>
             <p>Funds</p>
-            <p>Funds</p>
+            <p>{funds?.toFixed(2)}</p>
           </Grid.Col>
           <Grid.Col span={2}>
             <p>Equity</p>
-            <p>Equity</p>
+            <p>{equity?.toFixed(2)}</p>
           </Grid.Col>
-          <Grid.Col span={2}>
+          <Grid.Col span={2} style={{ color: available > 0 ? '#228be6' : 'red' }}>
             <p>Available</p>
-            <p>Available</p>
+            <p>{available?.toFixed(2)}</p>
           </Grid.Col>
           <Grid.Col span={2}>
             <p>Margin</p>
-            <p>Margin</p>
+            <p>{margin?.toFixed(2)}</p>
           </Grid.Col>
-          <Grid.Col span={1}>
+          <Grid.Col span={2} style={{ color: profit >= 0 ? '#228be6' : 'red' }}>
             <p>P&L</p>
-            <p>P&L</p>
+            <p>{profit?.toFixed(2)}</p>
           </Grid.Col>
           <Grid.Col
-            span={3}
+            span={2}
             style={{
               display: 'flex',
               alignItems: 'center',

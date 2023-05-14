@@ -59,7 +59,7 @@ export class TradeService {
   async findAll(getAllTradesDto): Promise<Trade[] & any> {
     const { filter } = getAllTradesDto;
 
-    if (filter === 'all') return this.prisma.trade.findMany({});
+    if (!filter || filter === 'all') return this.prisma.trade.findMany({});
     else
       return this.prisma.trade.findMany({
         where: { isOpen: filter === 'open' ? true : false },

@@ -1,11 +1,13 @@
+import { Logger } from '@nestjs/common';
 import {
+  MessageBody,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
   WsResponse,
 } from '@nestjs/websockets';
 import { PrismaService } from '../../prisma/prisma.service';
+import { CapitalComGateway } from '../capital-com/cc.ws.gateway.service';
 
 @WebSocketGateway({
   namespace: 'account',
@@ -15,43 +17,83 @@ import { PrismaService } from '../../prisma/prisma.service';
   },
 })
 export class AccountGateway {
-  constructor(private readonly prismaService: PrismaService) {}
+  private readonly logger = new Logger(AccountGateway.name);
+
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly capitalComGateway: CapitalComGateway,
+  ) {}
 
   @WebSocketServer()
   server;
 
   @SubscribeMessage('balance')
   async handleBalanceEvent(@MessageBody() data: any): Promise<WsResponse<any>> {
-    console.log('balance', data);
+    try {
+      // console.log('balance', data);
 
-    const user = await this.prismaService.user.findUnique({
-      where: { email: 'test@mail.com' },
-    });
-    const trades = await this.prismaService.trade.findMany({});
+      const user = await this.prismaService.user.findUnique({
+        where: { email: 'test@mail.com' },
+      });
+      const trades = await this.prismaService.trade.findMany({
+        where: { isOpen: true },
+      });
 
-    const userFunds = user.balance;
-    const userMargin = trades.reduce((acc, trade, idx, arr) => {
-      return acc + trade.marginSize;
-    }, 0);
+      const userFunds = user.balance;
+      const accountData = trades.reduce(
+        (acc, trade) => {
+          const {
+            pair,
+            isLong,
+            tradeSize,
+            marginSize,
+            priceOpened,
+            leverageRatio,
+          } = trade;
 
-    const funds = user.balance;
-    let equity;
-    let available;
-    let margin;
-    let profit;
+          const quoteType = isLong ? 'bid' : 'ofr';
+          const currentPrice = this.capitalComGateway.pairs[pair][quoteType];
 
-    return {
-      event: 'balance',
-      data: {
-        message: 'balance response',
-        user,
-        trades,
-        funds: userFunds,
-        equity,
-        available,
-        margin: userMargin,
-        profit,
-      },
-    };
+          acc.margin += marginSize;
+
+          if (isLong)
+            acc.profit +=
+              (currentPrice - priceOpened) * tradeSize * leverageRatio;
+          else
+            acc.profit -=
+              (currentPrice - priceOpened) * tradeSize * leverageRatio;
+
+          if (acc.profit > 0) acc.equity = acc.funds + acc.profit;
+          else acc.equity = acc.funds - acc.profit;
+
+          acc.available = acc.equity - acc.margin;
+
+          return acc;
+        },
+        { funds: user.balance, margin: 0, profit: 0, equity: 0, available: 0 },
+      );
+
+      const funds = user.balance;
+      const equity = accountData.equity;
+      const available = accountData.available;
+      const margin = accountData.margin;
+      const profit = accountData.profit;
+
+      return {
+        event: 'balance',
+        data: {
+          message: 'balance response',
+          user,
+          trades,
+          funds: userFunds,
+          equity,
+          available,
+          margin,
+          profit,
+        },
+      };
+    } catch (error) {
+      this.logger.debug(error);
+    }
   }
 }

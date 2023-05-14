@@ -12,12 +12,12 @@ import QuoteTypeContext from './contexts/QuoteTypeContext';
 import ThemeContext from './contexts/ThemeContext';
 import TickerContext from './contexts/TickerContext';
 import UserContext from './contexts/UserContext';
-import UserDetailsContext from './contexts/UserDetailsContext';
+import AccountBalanceContext from './contexts/AccountBalanceContext';
 
 export default function App() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
+  const [accountBalance, setAccountBalance] = useState({ live: {}, previous: {} });
 
   // console.log('user', user);
 
@@ -36,6 +36,7 @@ export default function App() {
   ]);
   const [course, setCourse] = useState({ [`${ticker}`]: { live: {}, previous: {} } });
 
+  // /market core api ws namespace
   useEffect(() => {
     const socket = io('ws://localhost:5555/market', {
       transports: ['websocket', 'polling'],
@@ -74,6 +75,7 @@ export default function App() {
     };
   }, []);
 
+  // /account core api ws namespace
   useEffect(() => {
     const socket = io('ws://localhost:5555/account', {
       transports: ['websocket', 'polling'],
@@ -95,10 +97,13 @@ export default function App() {
 
     socket.on('balance', (message) => {
       console.log('balance', message);
+      setAccountBalance((previousBalance: any) => {
+        return { live: { ...message }, previous: previousBalance.live };
+      });
     });
 
     socket.on('disconnect', () => {
-      console.info('WebSocket connection to /market closed.');
+      console.info('WebSocket connection to /account closed.');
     });
 
     const interval = setInterval(() => {
@@ -126,7 +131,7 @@ export default function App() {
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
         <UserContext.Provider value={{ user, setUser }}>
-          <UserDetailsContext.Provider value={{ userDetails, setUserDetails }}>
+          <AccountBalanceContext.Provider value={{ accountBalance, setAccountBalance }}>
             <LiveCourseContext.Provider value={{ course, setCourse }}>
               <QuoteTypeContext.Provider value={{ quoteType, setQuoteType }}>
                 <TickerContext.Provider value={{ ticker, setTicker }}>
@@ -134,7 +139,7 @@ export default function App() {
                 </TickerContext.Provider>
               </QuoteTypeContext.Provider>
             </LiveCourseContext.Provider>
-          </UserDetailsContext.Provider>
+          </AccountBalanceContext.Provider>
         </UserContext.Provider>
       </ThemeContext.Provider>
     </MantineProvider>

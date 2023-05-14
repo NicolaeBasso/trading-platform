@@ -53,7 +53,7 @@ const Overview = ({
   const liveCourseQuoteType = quoteTypeFromLiveCourse(quoteType);
 
   return (
-    <div style={{ marginLeft: '10%', display: 'block' }}>
+    <div style={{ marginLeft: '10%', marginTop: '-15px', display: 'block' }}>
       <div>
         <div style={{ margin: '20px 0' }}>
           <div
