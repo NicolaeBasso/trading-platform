@@ -28,7 +28,12 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [ticker, setTicker] = useState(tickers.BTCUSD);
   const [quoteType, setQuoteType] = useState(QuoteType.ASK);
-  const [subscribed, setSubscribed] = useState([ticker, tickers.US100]);
+  const [subscribed, setSubscribed] = useState([
+    ticker,
+    tickers.BTCUSD,
+    tickers.ETHUSD,
+    tickers.US100,
+  ]);
   const [course, setCourse] = useState({ [`${ticker}`]: { live: {}, previous: {} } });
 
   useEffect(() => {
@@ -44,11 +49,15 @@ export default function App() {
       socket.emit('course');
     });
 
-    socket.on('course', (event) => {
+    socket.on('course', (message) => {
       setCourse((previousValue: any) => {
         // console.log('previousValue', previousValue);
-        return { live: event.pairs, previous: previousValue.live };
+        return { live: message.pairs, previous: previousValue.live };
       });
+    });
+
+    socket.on('balance', (message) => {
+      console.log('balance', message);
     });
 
     socket.on('disconnect', () => {
@@ -65,7 +74,44 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {}, [course]);
+  useEffect(() => {
+    const socket = io('ws://localhost:5555/account', {
+      transports: ['websocket', 'polling'],
+    });
+
+    socket.on('connect', () => {
+      console.info('WebSocket connection established.');
+      const message = { message: 'Connect to /account' };
+
+      socket.emit('balance');
+    });
+
+    socket.on('course', (message) => {
+      setCourse((previousValue: any) => {
+        // console.log('previousValue', previousValue);
+        return { live: message.pairs, previous: previousValue.live };
+      });
+    });
+
+    socket.on('balance', (message) => {
+      console.log('balance', message);
+    });
+
+    socket.on('disconnect', () => {
+      console.info('WebSocket connection closed.');
+    });
+
+    const interval = setInterval(() => {
+      socket.emit('course', { pairs: subscribed });
+    }, 300);
+
+    return () => {
+      clearInterval(interval);
+      socket.close();
+    };
+  }, []);
+
+  // useEffect(() => {}, [course]);
 
   const router = (
     <Routes>

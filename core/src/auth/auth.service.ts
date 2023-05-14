@@ -45,7 +45,7 @@ export class AuthService {
     return { message: 'User created succefully', status: HttpStatus.CREATED };
   }
 
-  async login(dto: LoginDto, req: Request, res: Response): Promise<any> {
+  async login(dto: LoginDto, req: Request): Promise<any> {
     const { email, password } = dto;
     console.log(email);
 

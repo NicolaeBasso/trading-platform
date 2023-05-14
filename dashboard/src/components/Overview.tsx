@@ -20,7 +20,6 @@ const Overview = ({
   fetchUserDetails,
 }) => {
   const { course } = useContext(LiveCourseContext);
-  console.log('Overview course', course);
 
   const tickerLive = course.live?.[ticker];
   const tickerPrevious = course.previous?.[ticker];
@@ -29,18 +28,9 @@ const Overview = ({
   const [currentBid, setCurrentBid] = useState(tickerLive?.bid);
   const [bidColor, setBidColor] = useState({ color: '#228be6' });
 
-  console.log('tickerLive', tickerLive);
-
   useEffect(() => {
-    console.log('overview course = ', course);
-    console.log({ previousBid, currentBid });
-
     setPreviousBid(course.previous?.[ticker]?.bid);
     setCurrentBid(course.live?.[ticker]?.bid);
-    // setBidColor(
-    //   course.live?.[ticker] >= course.previous?.[ticker] ? { color: '#228be6' } : { color: 'red' },
-    // );
-    console.log('bidColor', bidColor);
   }, [course]);
 
   const quoteTypeFromLiveCourse = (quoteType: QuoteType) => {
@@ -61,8 +51,6 @@ const Overview = ({
 
   const liveCourseQuoteType = quoteTypeFromLiveCourse(quoteType);
 
-  // const coloor = / { color: bidColor }
-
   return (
     <div style={{ marginLeft: '10%', display: 'block' }}>
       <div>
@@ -80,10 +68,13 @@ const Overview = ({
             </Title>
             {triangleIcon({
               width: '50px',
+              height: '50px',
               shapeFillColor:
                 course.previous?.[ticker]?.bid > course.live?.[ticker]?.bid ? 'red' : '#228be6',
               transform:
-                course.previous?.[ticker]?.bid > course.live?.[ticker]?.bid ? 'rotate(180)' : '0',
+                course.previous?.[ticker]?.bid > course.live?.[ticker]?.bid
+                  ? 'rotate(180)'
+                  : 'rotate(0)',
             })}
           </div>
           <Search />
