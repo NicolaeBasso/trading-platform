@@ -1,17 +1,13 @@
 import { HttpService } from '@nestjs/axios';
 import { Logger } from '@nestjs/common';
 import {
-  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import { WebSocket } from 'ws';
 
-// @Injectable()
 @WebSocketGateway({
   namespace: 'market',
   transports: ['websocket'],
@@ -20,28 +16,20 @@ import { WebSocket } from 'ws';
   },
 })
 export class CapitalComGateway {
-  @WebSocketServer()
-  server: Server;
+  private readonly logger = new Logger(CapitalComGateway.name);
 
   private ws = null;
 
-  private readonly logger = new Logger(CapitalComGateway.name);
-
-  // Access token
-  // private cst = 'wce2gZ5p4R3QaF3XP6L6gR55';
+  // Capital-Com Access token
   private cst = null;
-  // Account token or ID
-  // private securityToken = 'bFTDQkA0ofTrKhrpzF7gFJGD1dfhEEV';
+  // Capital-Com Account token or ID
   private securityToken = null;
 
   public subscriptions = {}; // Store subscription statuses by epic
   public pairs = {};
 
   @SubscribeMessage('events')
-  handleEvent(
-    @MessageBody() data: unknown,
-    @ConnectedSocket() client: Socket,
-  ): WsResponse<unknown> {
+  handleEvent(@MessageBody() data: unknown): WsResponse<unknown> {
     const event = 'events';
     return { event, data: { data, received: true } };
   }
@@ -49,21 +37,20 @@ export class CapitalComGateway {
   @SubscribeMessage('course')
   handleRequestLiveCourse(
     @MessageBody() clientData: { pair: string } & any,
-    @ConnectedSocket() client: Socket,
   ): WsResponse<unknown> {
     const pairsRequested = clientData?.pairs || [];
     const event = 'course';
 
     const currentSubscriptions = [...Object.keys(this.subscriptions)];
 
-    if (
-      !pairsRequested.every((el) =>
-        Object.keys(this.subscriptions).includes(el),
-      )
-    )
-      this.subscribeMessage([
-        ...new Set([...pairsRequested, ...currentSubscriptions]),
-      ]);
+    // if (
+    //   !pairsRequested.every((el) =>
+    //     Object.keys(this.subscriptions).includes(el),
+    //   )
+    // )
+    //   this.subscribeMessage([
+    //     ...new Set([...pairsRequested, ...currentSubscriptions]),
+    //   ]);
 
     const toSend = {};
     Object.entries(this.pairs).map((ticker) => {
@@ -118,6 +105,10 @@ export class CapitalComGateway {
       }
     });
 
+    this.ws.on('error', (error) => {
+      this.logger.error(error);
+    });
+
     // Ping the server every x milliseconds to keep connection alive
     setInterval(() => {
       const pingMessage = {
@@ -144,18 +135,23 @@ export class CapitalComGateway {
 
   // Subscribe to market data for epics like ['BTCUSD', 'US100', 'OIL_CRUDE']
   private async subscribeMessage(epics: string[] = []) {
-    // console.log('epics to subscribe to =', epics);
+    if (this.ws) {
+      const epicsToSubscribeTo = [
+        ...new Set([...epics, 'BTCUSD', 'ETHUSD', 'US100']),
+      ];
 
-    const subscribeMessage = {
-      destination: 'marketData.subscribe',
-      correlationId: '1',
-      cst: this.cst,
-      securityToken: this.securityToken,
-      payload: {
-        epics: [...epics, 'BTCUSD', 'US100'],
-      },
-    };
-    this.ws.send(JSON.stringify(subscribeMessage));
+      const subscribeMessage = {
+        destination: 'marketData.subscribe',
+        correlationId: '1',
+        cst: this.cst,
+        securityToken: this.securityToken,
+        payload: {
+          // epics: [...epics, 'BTCUSD', 'ETHUSD', 'US100'],
+          epics: epicsToSubscribeTo,
+        },
+      };
+      this.ws.send(JSON.stringify(subscribeMessage));
+    }
   }
 
   private createSessionWithCapitalCom = async (): Promise<void> => {

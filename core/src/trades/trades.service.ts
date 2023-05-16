@@ -5,6 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Trade } from './entities/trade.entity';
 import { CapitalComGateway } from '../capital-com/cc.ws.gateway.service';
+import { QuoteType } from './enums/trade-enums';
 
 @Injectable()
 export class TradeService {
@@ -15,19 +16,37 @@ export class TradeService {
   ) {}
 
   async create(createTradeDto: CreateTradeDto) {
-    const { pair, tradeSize } = createTradeDto;
+    const {
+      pair,
+      tradeSize,
+      isLong = true,
+      leverageRatio = 100,
+    } = createTradeDto;
 
+    console.log(pair, tradeSize);
     console.log(`Subscriptions`, this.capitalComGateway.subscriptions);
     console.log(`Pairs`, this.capitalComGateway.pairs);
 
-    const priceOpened = this.capitalComGateway.pairs[pair].bid;
+    const quoteType = `${isLong ? 'bid' : 'ofr'}`;
+
+    const priceOpened = this.capitalComGateway.pairs[pair][quoteType];
+
+    console.log(
+      'priceOpened',
+      `${isLong ? QuoteType.BID : QuoteType.ASK}`,
+      priceOpened,
+    );
 
     const tradeCreated = await this.prisma.trade.create({
       data: {
         pair,
         tradeSize,
         isOpen: true,
+        isLong,
         priceOpened: priceOpened,
+        leverageRatio,
+        marginSize: (priceOpened / leverageRatio) * tradeSize,
+        leverageSize: priceOpened * leverageRatio * tradeSize,
         overnightInterest: 0.15,
         overnightFee: 0.1,
         ...createTradeDto,
@@ -37,8 +56,14 @@ export class TradeService {
     return tradeCreated;
   }
 
-  async findAll(): Promise<Trade[] & any> {
-    return this.prisma.trade.findMany();
+  async findAll(getAllTradesDto): Promise<Trade[] & any> {
+    const { filter } = getAllTradesDto;
+
+    if (!filter || filter === 'all') return this.prisma.trade.findMany({});
+    else
+      return this.prisma.trade.findMany({
+        where: { isOpen: filter === 'open' ? true : false },
+      });
   }
 
   async findOne(id: string) {

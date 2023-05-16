@@ -12,9 +12,6 @@ export class UsersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getMyUser(@Req() req) {
-    // console.log(req.cookies);
-    // console.log(req.user);
-
     return this.usersService.getMyUser(req);
   }
 

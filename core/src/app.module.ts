@@ -30,7 +30,7 @@ import { CapitalComModule } from './capital-com/cc.module';
     UsersModule,
     ThrottlerModule.forRoot({
       ttl: 5,
-      limit: 5,
+      limit: 15,
     }),
   ],
 })

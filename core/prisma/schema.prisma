@@ -13,6 +13,7 @@ model User {
   fullName String? 
   hashedPassword String 
   role Role? @default(USER)
+  balance Float @default(10000)
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt()
 }
@@ -23,22 +24,22 @@ enum Role {
 }
 model Trade {
   id String @unique @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
   type TradeType? @default(CFD) 
-  
+  isLong Boolean @default(true)
   isOpen Boolean @default(false)
   pair String @default("BTC/USD")
-  leverageRatio Int @default(1)
+  leverageRatio Int @default(100)
   marginSize Float?
   leverageSize Float?
-  tradeSize Float @default(0.1)
+  tradeSize Float @default(1)
   priceOpened Float  
   priceClosed Float?
   stopLoss Float?
   takeProfit Float?
   overnightInterest Float @default(0.1)
   overnightFee Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
 }
 
 enum TradeType {

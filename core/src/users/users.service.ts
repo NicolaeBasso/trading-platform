@@ -29,7 +29,7 @@ export class UsersService {
 
     delete foundUser.hashedPassword;
 
-    return { user: foundUser };
+    return foundUser;
   }
 
   async getUsers() {

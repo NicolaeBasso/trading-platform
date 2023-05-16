@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Trade" ALTER COLUMN "leverageRatio" SET DEFAULT 100,
+ALTER COLUMN "tradeSize" SET DEFAULT 1;

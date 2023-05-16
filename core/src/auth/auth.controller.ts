@@ -25,17 +25,17 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Request() req, @Response() res, @Body() dto: LoginDto) {
+  async login(@Request() req, @Body() dto: LoginDto) {
     this.logger.debug(`Login! ${dto.email} ${dto.password}`);
 
-    return this.authService.login(dto, req, res);
+    return this.authService.login(dto, req);
   }
 
   @Get('logout')
-  logout(@Request() req, @Response() res) {
+  logout(@Request() req) {
     this.logger.debug(`Logout!`);
 
-    return this.authService.logout(req, res);
+    return this.authService.logout(req);
   }
 
   @Delete('removeAll')

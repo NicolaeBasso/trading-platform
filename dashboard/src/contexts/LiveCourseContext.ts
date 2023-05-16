@@ -1,8 +1,8 @@
 import React, { Context } from 'react';
 
-const LiveCourseContext: Context<{ liveCourse: any; setLiveCourse: any }> = React.createContext({
-  liveCourse: {},
-  setLiveCourse: {},
+const LiveCourseContext: Context<{ course: any; setCourse: any }> = React.createContext({
+  course: { previous: {}, live: {} },
+  setCourse: {},
 });
 
 export default LiveCourseContext;

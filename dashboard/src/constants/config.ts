@@ -10,6 +10,11 @@ export enum QuoteType {
   ASK = 'ask',
 }
 
+export enum PositionType {
+  LONG = 'long',
+  SHORT = 'short',
+}
+
 export const timeFrames = {
   WEEK: { text: '1W', api: 'WEEK' },
   DAY: { text: '1D', api: 'DAY' },
