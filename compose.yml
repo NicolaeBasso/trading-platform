@@ -42,6 +42,13 @@ services:
       - 6380:6380 
     restart: unless-stopped
 
+  lstm:
+    container_name: lstm
+    build:
+      context: ./lstm
+    depends_on:
+      - redis-master
+      - py-cache
 
 
 volumes:

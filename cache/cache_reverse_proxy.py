@@ -29,11 +29,7 @@ def past():
 @cache_endpoints.get('/future')
 def future():
     ticker = request.args.get('ticker', default='BTCUSD')
+    data = future_db.json().get(ticker)
 
-    return flask.jsonify(
-        {
-            "DAY": {
-                "snapshotTimeUTC": [{"Date": "2023-05-09T00:00:00", "closePrice": 350}]
-            }
-        }
-    )
+
+    return data
