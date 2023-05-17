@@ -43,14 +43,14 @@ export class CapitalComGateway {
 
     const currentSubscriptions = [...Object.keys(this.subscriptions)];
 
-    // if (
-    //   !pairsRequested.every((el) =>
-    //     Object.keys(this.subscriptions).includes(el),
-    //   )
-    // )
-    //   this.subscribeMessage([
-    //     ...new Set([...pairsRequested, ...currentSubscriptions]),
-    //   ]);
+    if (
+      !pairsRequested.every((el) =>
+        Object.keys(this.subscriptions).includes(el),
+      )
+    )
+      this.subscribeMessage([
+        ...new Set([...pairsRequested, ...currentSubscriptions]),
+      ]);
 
     const toSend = {};
     Object.entries(this.pairs).map((ticker) => {
@@ -135,7 +135,9 @@ export class CapitalComGateway {
 
   // Subscribe to market data for epics like ['BTCUSD', 'US100', 'OIL_CRUDE']
   private async subscribeMessage(epics: string[] = []) {
-    if (this.ws) {
+    console.log('STATE = ', this.ws.readyState);
+
+    if (this.ws && this.ws.readyState) {
       const epicsToSubscribeTo = [
         ...new Set([...epics, 'BTCUSD', 'ETHUSD', 'US100']),
       ];
@@ -155,34 +157,34 @@ export class CapitalComGateway {
   }
 
   private createSessionWithCapitalCom = async (): Promise<void> => {
-    return this.httpService
-      .axiosRef({
+    try {
+      const capitalComSession = await this.httpService.axiosRef({
         method: 'POST',
         url: 'https://demo-api-capital.backend-capital.com/api/v1/session',
         data: {
           identifier: 'waffle4everyone@gmail.com',
-          password: 'vrewth3V!!*&F,,',
+          // password: 'vrewth3V!!*&F,,',
+          password: 'ZJsH3TsABaHRZq!',
           encryptedPassword: 'false',
         },
         headers: {
-          'X-CAP-API-KEY': 'qUBPe2IICLeKIkKD',
+          // 'X-CAP-API-KEY': 'qUBPe2IICLeKIkKD',
+          'X-CAP-API-KEY': '1qN2wT8QoIPUcNmF',
         },
-      })
-      .then(
-        (fullfilled) => {
-          this.cst = fullfilled.headers.cst;
-          this.securityToken = fullfilled.headers['x-security-token'];
-
-          if (this.cst && this.securityToken)
-            this.logger.debug('Created session with capital.com');
-          else this.logger.error('Failed to create session with capital.com!');
-        },
-        (rejected) => {
-          this.logger.warn(rejected);
-        },
-      )
-      .catch((error) => {
-        this.logger.error(error);
       });
+
+      console.log(capitalComSession);
+
+      if (capitalComSession) {
+        this.cst = capitalComSession.headers.cst;
+        this.securityToken = capitalComSession.headers['x-security-token'];
+
+        if (this.cst && this.securityToken)
+          this.logger.debug('Created session with capital.com');
+        else this.logger.error('Failed to create session with capital.com!');
+      }
+    } catch (error) {
+      this.logger.error(error);
+    }
   };
 }

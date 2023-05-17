@@ -52,7 +52,7 @@ export class AccountGateway {
           } = trade;
 
           const quoteType = isLong ? 'bid' : 'ofr';
-          const currentPrice = this.capitalComGateway.pairs[pair][quoteType];
+          const currentPrice = this.capitalComGateway.pairs[pair]?.[quoteType];
 
           acc.margin += marginSize;
 
