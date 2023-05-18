@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -11,7 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { WebSocket } from 'ws';
 
-// @Injectable()
+@Injectable()
 @WebSocketGateway({
   namespace: 'market',
   transports: ['websocket'],
@@ -139,6 +139,7 @@ export class CapitalComGateway {
         cst: this.cst,
         securityToken: this.securityToken,
       };
+      console.log('ping message', pingMessage);
       this.ws.send(JSON.stringify(pingMessage));
     }, 500000);
 
@@ -171,6 +172,7 @@ export class CapitalComGateway {
       securityToken: this.securityToken,
       payload: {
         epics: [...epics, 'BTCUSD', 'US100', 'AAPL', 'OIL_CRUDE'],
+        // epics: ['BTCUSD'],
       },
     };
     this.ws.send(JSON.stringify(subscribeMessage));
