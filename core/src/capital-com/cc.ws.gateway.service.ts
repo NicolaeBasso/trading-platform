@@ -120,6 +120,7 @@ export class CapitalComGateway {
       this.ws.send(JSON.stringify(pingMessage));
     }, 500000);
 
+    // Create session with Capital Com and subscribe to requested epics
     this.createSessionWithCapitalCom().then(() => {
       this.subscribeMessage();
 
@@ -176,6 +177,11 @@ export class CapitalComGateway {
       console.log(capitalComSession);
 
       if (capitalComSession) {
+        console.log('session creds', {
+          cst: capitalComSession.headers.cst,
+          securityToken: capitalComSession.headers['x-security-token'],
+        });
+
         this.cst = capitalComSession.headers.cst;
         this.securityToken = capitalComSession.headers['x-security-token'];
 
