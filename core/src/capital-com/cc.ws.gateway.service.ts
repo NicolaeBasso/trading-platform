@@ -70,7 +70,7 @@ export class CapitalComGateway {
       if (pairsRequested.includes(ticker[0])) toSend[ticker[0]] = ticker[1];
     });
 
-    // console.log('toSend', toSend);
+    console.log('toSend', toSend);
 
     return {
       event,
@@ -93,13 +93,22 @@ export class CapitalComGateway {
     );
 
     this.ws.on('open', async () => {
+      console.log('ws.on.open');
       this.subscribeMessage();
     });
 
     this.ws.on('message', (message: string) => {
+      console.log('ws ready state', this.ws.readyState);
+
+      // console.log('on message Buffer', { message });
+
       const data = JSON.parse(message);
+      console.log('on message parsed', { data });
 
       if (data.destination === 'marketData.subscribe') {
+        console.log('marketData.subscribe', { data });
+        console.log('subscriptions', data?.payload?.subscriptions);
+
         // Store subscription status by epic
         const subscriptions = data.payload.subscriptions;
         for (const epic in subscriptions) {
@@ -111,6 +120,8 @@ export class CapitalComGateway {
         data.destination === 'quote' &&
         this.subscriptions[data.payload.epic] === 'PROCESSED'
       ) {
+        console.log('quote', { data });
+
         // Receive market data updates for subscribed epics
         // Store epic update to pairs dictionary
 
@@ -122,7 +133,9 @@ export class CapitalComGateway {
     setInterval(() => {
       const pingMessage = {
         destination: 'ping',
-        correlationId: '2',
+        correlationId: '5',
+        // previous
+        // correlationId: '2',
         cst: this.cst,
         securityToken: this.securityToken,
       };
@@ -144,7 +157,12 @@ export class CapitalComGateway {
 
   // Subscribe to market data for epics like ['BTCUSD', 'US100', 'OIL_CRUDE']
   private async subscribeMessage(epics: string[] = []) {
-    // console.log('epics to subscribe to =', epics);
+    console.log('epics to subscribe to =', epics);
+
+    console.log('subscribe secrets', {
+      cst: this.cst,
+      securityToken: this.securityToken,
+    });
 
     const subscribeMessage = {
       destination: 'marketData.subscribe',
@@ -152,7 +170,7 @@ export class CapitalComGateway {
       cst: this.cst,
       securityToken: this.securityToken,
       payload: {
-        epics: [...epics, 'BTCUSD', 'US100'],
+        epics: [...epics, 'BTCUSD', 'US100', 'AAPL', 'OIL_CRUDE'],
       },
     };
     this.ws.send(JSON.stringify(subscribeMessage));
