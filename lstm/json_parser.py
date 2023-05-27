@@ -2,7 +2,7 @@ import datetime
 import json
 
 
-def parser(json_data, pediod='MINUTE'): #  takes python dict as input
+def parser(json_data, period='MINUTE'): #  takes python dict as input
 
     def timestamp_to_iso(timestamp):
         return datetime.datetime.utcfromtimestamp(timestamp / 1000).isoformat()
@@ -10,11 +10,11 @@ def parser(json_data, pediod='MINUTE'): #  takes python dict as input
     # Parse and restructure the JSON
     output_data = []
     json_data = [json_data]
+
+    entry = {period: {'prices': [] }}
+
     for item in json_data[0]:
-        print(item)
-        entry = {
-            pediod: {
-                "prices": [
+        entry[period]['prices'].append(
                     {
                         "snapshotTime": timestamp_to_iso(item["snapshotTimeUTC"]),
                         "snapshotTimeUTC": timestamp_to_iso(item["snapshotTimeUTC"]),
@@ -36,9 +36,7 @@ def parser(json_data, pediod='MINUTE'): #  takes python dict as input
                         },
                         "lastTradedVolume": item["lastTradedVolume"]
                     }
-                ]
-            }
-        }
-        output_data.append(entry)
-        return output_data[0]
+                )
+
+    return entry
 
