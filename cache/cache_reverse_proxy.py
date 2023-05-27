@@ -1,6 +1,5 @@
 import redis, flask
 from flask import request, Blueprint
-import session
 
 past_db = redis.Redis(host='redis-master', port=6379, db=0)
 future_db = redis.Redis(host='redis-master', port=6379, db=1)
@@ -14,8 +13,6 @@ def past():
 
     if past_db.exists(ticker):
         pass
-    else:
-        session.update_cache(ticker)
 
     if period == 'ALL':
         data = past_db.json().get(ticker)
