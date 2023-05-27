@@ -11,9 +11,13 @@ app.register_blueprint(cache_endpoints)
 CORS(app, supports_credentials=True)
 
 
+
+
 if __name__ == '__main__':
-    session = Thread(target=session.create_session)
-    session.start()
-    
+    session_create = Thread(target=session.create_session)
+    session_create.start()
+
+    update_cache = Thread(target=session.update_cache, args=('BTCUSD',))
+    update_cache.start()
 
     app.run(host='0.0.0.0', port=6380)
