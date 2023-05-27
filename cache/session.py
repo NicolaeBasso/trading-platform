@@ -89,3 +89,4 @@ def update_cache(ticker):
         r.json().set(ticker, Path(f'.{res}'), data)
 
     sleep(60)
+

@@ -16,6 +16,7 @@ CORS(app, supports_credentials=True)
 if __name__ == '__main__':
     session_create = Thread(target=session.create_session)
     session_create.start()
+    sleep(3)
 
     update_cache = Thread(target=session.update_cache, args=('BTCUSD',))
     update_cache.start()
