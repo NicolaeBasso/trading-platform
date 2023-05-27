@@ -92,17 +92,25 @@ df.rename(mapper= mapper, axis=1, inplace=True)
 print(df)
 
 j = (df.groupby(['snapshotTimeUTC', 'lastTradedVolume'])
-       .apply(lambda x: x[['openPricebid','openPriceask','closePricebid', 'closePriceask','highPricebid', 'highPriceask','lowPricebid', 'lowPricebid']].to_dict('records'))
+       .apply(lambda x: x[['openPricebid','openPriceask','closePricebid', 'closePriceask','highPricebid', 'highPriceask','lowPricebid', 'lowPriceask']].to_dict('records'))
        .reset_index()
        .rename(columns={0:'prices'})
        .to_json(orient='records'))
 
+
+from json_parser import parser
 j = json.loads(j)
+j = parser(j, 'MINUTE')
+
+print(j)
+
 if future_db.exists('BTCUSD'):
     pass
 else:
     future_db.json().set('BTCUSD', Path.root_path(), j)
 
     
+
+
 
     
