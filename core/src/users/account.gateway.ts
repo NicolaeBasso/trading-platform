@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Req, UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -6,8 +6,12 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
+import { Request } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CapitalComGateway } from '../capital-com/cc.ws.gateway.service';
+import { getUserBalance } from '../trades/utils/functions';
+import { RolesWsGuard } from '../utils/guards/roles.ws.guard';
+import { User } from '@prisma/client';
 
 @WebSocketGateway({
   namespace: 'account',
@@ -27,57 +31,21 @@ export class AccountGateway {
   @WebSocketServer()
   server;
 
+  @UseGuards(RolesWsGuard)
   @SubscribeMessage('balance')
-  async handleBalanceEvent(@MessageBody() data: any): Promise<WsResponse<any>> {
-    try {
-      // console.log('balance', data);
+  async handleBalanceEvent(
+    @MessageBody() data: any,
+    @Req() req: Request,
+  ): Promise<WsResponse<any>> {
+    const reqUser: Partial<User> = req.user;
 
+    try {
       const user = await this.prismaService.user.findUnique({
-        where: { email: 'test@mail.com' },
+        where: { id: reqUser.id },
       });
       const trades = await this.prismaService.trade.findMany({
         where: { isOpen: true },
       });
-
-      const userFunds = user.balance;
-      const accountData = trades.reduce(
-        (acc, trade) => {
-          const {
-            pair,
-            isLong,
-            tradeSize,
-            marginSize,
-            priceOpened,
-            leverageRatio,
-          } = trade;
-
-          const quoteType = isLong ? 'bid' : 'ofr';
-          const currentPrice = this.capitalComGateway.pairs[pair][quoteType];
-
-          acc.margin += marginSize;
-
-          if (isLong)
-            acc.profit +=
-              (currentPrice - priceOpened) * tradeSize * leverageRatio;
-          else
-            acc.profit -=
-              (currentPrice - priceOpened) * tradeSize * leverageRatio;
-
-          if (acc.profit > 0) acc.equity = acc.funds + acc.profit;
-          else acc.equity = acc.funds - acc.profit;
-
-          acc.available = acc.equity - acc.margin;
-
-          return acc;
-        },
-        { funds: user.balance, margin: 0, profit: 0, equity: 0, available: 0 },
-      );
-
-      const funds = user.balance;
-      const equity = accountData.equity;
-      const available = accountData.available;
-      const margin = accountData.margin;
-      const profit = accountData.profit;
 
       return {
         event: 'balance',
@@ -85,11 +53,11 @@ export class AccountGateway {
           message: 'balance response',
           user,
           trades,
-          funds: userFunds,
-          equity,
-          available,
-          margin,
-          profit,
+          ...getUserBalance({
+            user,
+            trades,
+            livePairs: this.capitalComGateway.pairs,
+          }),
         },
       };
     } catch (error) {

@@ -50,7 +50,7 @@ export class RolesGuard implements CanActivate {
           secret: this.configService.get<string>('JWT_SECRET'),
         });
       } catch (error) {
-        this.logger.error(error);
+        this.logger.error('RolesGuard | Invalid JWT');
       }
       req.user = user;
 

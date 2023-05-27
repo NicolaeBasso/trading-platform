@@ -1,0 +1,17 @@
+.overview-quote {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overview-key-val {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overview-button {
+  background-color: #228be6;
+  color: #fff;
+}

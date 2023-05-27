@@ -1,8 +1,5 @@
-import React, { useContext, useState } from 'react';
-import ThemeContext from '../contexts/ThemeContext';
-import SearchResults from './SearchResults';
-import { SearchIcon, XIcon } from '@heroicons/react/solid';
 import { Select } from '@mantine/core';
+import { useContext } from 'react';
 import { tickers, tickersArr } from '../constants/config';
 import TickerContext from '../contexts/TickerContext';
 

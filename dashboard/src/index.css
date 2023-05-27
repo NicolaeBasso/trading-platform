@@ -11,19 +11,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #F7FAFF;
-  font-family: var(--font-family) !important;
   box-sizing: border-box;
 }
 
 :root { 
   --primary-color: #0076c6;
-  --secondary-color: 'red';
+  --secondary-color: '#de2e21';
 } 
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
 
 @layer components {
   .custom-scrollbar::-webkit-scrollbar {
@@ -41,6 +35,6 @@ code {
   }
 
   .custom-scrollbar-dark::-webkit-scrollbar-thumb {
-    background-color: #312e81;
+    background-color: #0076c6;
   }
 }

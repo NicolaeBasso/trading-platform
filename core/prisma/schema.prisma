@@ -24,6 +24,7 @@ enum Role {
 }
 model Trade {
   id String @unique @default(uuid())
+  userId String?
   type TradeType? @default(CFD) 
   isLong Boolean @default(true)
   isOpen Boolean @default(false)
