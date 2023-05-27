@@ -23,6 +23,9 @@ const Dashboard = () => {
 
   const [period, setPeriod] = useState(timeFrames.DAY.api);
   const [tickerHistory, setTickerHistory]: [TickerCandle[], SetStateAction<any>] = useState([]);
+  const [tickerPrediction, setTickerPrediction]: [TickerCandle[], SetStateAction<any>] = useState(
+    [],
+  );
 
   const { profile = null, trades = [] } = user || {};
 
@@ -30,6 +33,12 @@ const Dashboard = () => {
     const data = await MarketsAPI.getTickerHistory({ ticker, period });
 
     setTickerHistory(data[0]?.prices);
+  };
+
+  const fetchTickerPrediction = async () => {
+    const data = await MarketsAPI.getTickerPrediction({ ticker, period });
+
+    setTickerPrediction(data[0]?.prices);
   };
 
   const fetchUserDetails = async () => {
@@ -41,6 +50,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchTickerHistory();
+    fetchTickerPrediction();
   }, [ticker, period, quoteType]);
 
   useEffect(() => {
@@ -55,6 +65,7 @@ const Dashboard = () => {
           <div id='Chart' className='w-3/4'>
             <Chart
               tickerHistory={tickerHistory}
+              tickerPrediction={tickerPrediction}
               period={period}
               setPeriod={setPeriod}
               quoteType={quoteType}
