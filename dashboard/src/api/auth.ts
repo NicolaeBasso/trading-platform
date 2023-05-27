@@ -14,8 +14,6 @@ const register = async (body: LoginInterface) => {
 const login = async (body: LoginInterface) => {
   const res = await axios.post('/auth/login', body);
 
-  console.log(res);
-
   return res.data;
 };
 

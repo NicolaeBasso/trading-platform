@@ -21,8 +21,8 @@ export const triangleIcon = ({
       id='icon-bound'
       stroke='none'
       fill='none'
-      colorInterpolation={'red'}
-      floodColor={'red'}
+      colorInterpolation={'#de2e21'}
+      floodColor={'#de2e21'}
     />
     <polygon points='8,5 13,10 3,10' />
   </svg>

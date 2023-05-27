@@ -19,8 +19,6 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [accountBalance, setAccountBalance] = useState({ live: {}, previous: {} });
 
-  // console.log('user', user);
-
   useEffect(() => {
     if (!localStorage.getItem('jwt') || !user) navigate('/login');
   }, [localStorage, user]);
@@ -40,6 +38,13 @@ export default function App() {
   useEffect(() => {
     const socket = io('ws://localhost:5555/market', {
       transports: ['websocket', 'polling'],
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            Authorization: localStorage.getItem('jwt'),
+          },
+        },
+      },
     });
 
     socket.on('connect', () => {
@@ -52,14 +57,11 @@ export default function App() {
 
     socket.on('course', (message) => {
       setCourse((previousValue: any) => {
-        // console.log('previousValue', previousValue);
         return { live: message.pairs, previous: previousValue.live };
       });
     });
 
-    socket.on('balance', (message) => {
-      console.log('balance', message);
-    });
+    socket.on('balance', (message) => {});
 
     socket.on('disconnect', () => {
       console.info('WebSocket connection to /market closed.');
@@ -90,7 +92,6 @@ export default function App() {
 
     socket.on('course', (message) => {
       setCourse((previousValue: any) => {
-        // console.log('previousValue', previousValue);
         return { live: message.pairs, previous: previousValue.live };
       });
     });

@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Trade } from './entities/trade.entity';
 import { CapitalComGateway } from '../capital-com/cc.ws.gateway.service';
 import { QuoteType } from './enums/trade-enums';
+import { getUserBalance } from './utils/functions';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class TradeService {
@@ -13,32 +15,29 @@ export class TradeService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly capitalComGateway: CapitalComGateway,
+    private readonly prismaService: PrismaService,
   ) {}
 
-  async create(createTradeDto: CreateTradeDto) {
+  async create({
+    user,
+    createTradeDto,
+  }: {
+    user: Partial<User>;
+    createTradeDto: CreateTradeDto;
+  }) {
     const {
       pair,
       tradeSize,
       isLong = true,
       leverageRatio = 100,
     } = createTradeDto;
-
-    console.log(pair, tradeSize);
-    console.log(`Subscriptions`, this.capitalComGateway.subscriptions);
-    console.log(`Pairs`, this.capitalComGateway.pairs);
+    const { id: userId } = user;
 
     const quoteType = `${isLong ? 'bid' : 'ofr'}`;
-
     const priceOpened = this.capitalComGateway.pairs[pair][quoteType];
-
-    console.log(
-      'priceOpened',
-      `${isLong ? QuoteType.BID : QuoteType.ASK}`,
-      priceOpened,
-    );
-
     const tradeCreated = await this.prisma.trade.create({
       data: {
+        userId,
         pair,
         tradeSize,
         isOpen: true,
@@ -79,11 +78,34 @@ export class TradeService {
     });
   }
 
-  async close(id: string) {
-    return this.prisma.trade.update({
+  async close({ id, user }: { id: string; user: Partial<User> }) {
+    const dbUser = await this.prismaService.user.findUnique({
+      where: { id: user.id },
+    });
+    const dbTrades = await this.prismaService.trade.findMany({
+      where: { userId: dbUser.id },
+    });
+
+    const { equity } = {
+      ...getUserBalance({
+        user: dbUser,
+        trades: dbTrades,
+        livePairs: this.capitalComGateway.pairs,
+        tradeId: id,
+      }),
+    };
+
+    const updatedTrade = await this.prisma.trade.update({
       where: { id },
       data: { isOpen: false },
     });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { balance: equity },
+    });
+
+    return updatedTrade;
   }
 
   async remove(id: string) {

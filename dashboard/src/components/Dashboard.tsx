@@ -1,36 +1,28 @@
-import { Button, Grid } from '@mantine/core';
 import { SetStateAction, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MarketsAPI } from '../api/markets';
+import { TradesAPI } from '../api/trades';
+import { UsersAPI } from '../api/users';
 import { timeFrames } from '../constants/config';
 import { TickerCandle } from '../constants/types';
 import QuoteTypeContext from '../contexts/QuoteTypeContext';
-import ThemeContext from '../contexts/ThemeContext';
 import TickerContext from '../contexts/TickerContext';
-import Chart from './Chart';
-import Overview from './Overview';
-import { logoutIcon } from '../assets/icons/logout';
 import UserContext from '../contexts/UserContext';
-import { useNavigate } from 'react-router-dom';
-import { TradesAPI } from '../api/trades';
-import { UsersAPI } from '../api/users';
-import LiveCourseContext from '../contexts/LiveCourseContext';
+import Chart from './Chart/Chart';
+import Overview from './Overview/Overview';
 import { TopNavBar } from './TopNavBar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const { darkMode } = useContext(ThemeContext);
   const { ticker, setTicker } = useContext(TickerContext);
   const { quoteType, setQuoteType } = useContext(QuoteTypeContext);
-  const { course, setCourse } = useContext(LiveCourseContext);
   const { user, setUser } = useContext(UserContext);
 
   if (!user || !localStorage.getItem('jwt')) navigate('/login');
 
   const [period, setPeriod] = useState(timeFrames.DAY.api);
   const [tickerHistory, setTickerHistory]: [TickerCandle[], SetStateAction<any>] = useState([]);
-  const [stockDetails, setStockDetails]: any = useState({});
-  const [quote, setQuote]: any = useState({});
 
   const { profile = null, trades = [] } = user || {};
 
@@ -44,8 +36,6 @@ const Dashboard = () => {
     const user = await UsersAPI.getUser();
     const trades = await TradesAPI.getAllTrades();
 
-    // console.log(user);
-
     setUser({ profile: { ...user }, trades: [...trades] });
   };
 
@@ -58,13 +48,9 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        margin: '0 20px 20px 20px',
-      }}
-    >
+    <div style={{}}>
       <TopNavBar setUser={setUser} />
-      <div className='flex flex-col'>
+      <div className='flex flex-col' style={{ margin: '0.5rem 0 0 0', padding: '1rem 2rem' }}>
         <div className='flex flex-grow'>
           <div id='Chart' className='w-3/4'>
             <Chart
@@ -77,8 +63,6 @@ const Dashboard = () => {
           <div id='Overview' className='w-1/4'>
             <Overview
               ticker={ticker}
-              // previousCourse={}
-              // course={course}
               quoteType={quoteType}
               setQuoteType={setQuoteType}
               profile={profile}

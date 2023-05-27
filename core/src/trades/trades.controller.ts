@@ -7,8 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { RolesGuard } from '../utils/guards/roles.guard';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
@@ -22,15 +24,10 @@ export class TradesController {
   constructor(private readonly tradeService: TradeService) {}
 
   @RolesDecorator(Roles.USER)
-  // @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   @Post('open')
-  create(
-    @Body()
-    createTradeDto: CreateTradeDto,
-  ) {
-    console.log('createTradeDto', createTradeDto);
-
-    return this.tradeService.create(createTradeDto);
+  create(@Body() createTradeDto: CreateTradeDto, @Req() req: Request) {
+    return this.tradeService.create({ createTradeDto, user: req.user });
   }
 
   @Patch('update/:id')
@@ -41,18 +38,14 @@ export class TradesController {
   @RolesDecorator(Roles.USER)
   @UseGuards(RolesGuard)
   @Patch('close/:id')
-  close(@Param('id') id: string) {
-    console.log('close trade with id = ', id);
-
-    return this.tradeService.close(id);
+  close(@Param('id') id: string, @Req() req: Request) {
+    return this.tradeService.close({ id, user: req.user });
   }
 
   @RolesDecorator(Roles.USER)
   @UseGuards(RolesGuard)
   @Get('all')
   findAll(@Query() filter: GetAllTradesDto) {
-    console.log('getAllTradesDto', filter);
-
     return this.tradeService.findAll(filter);
   }
 
