@@ -29,7 +29,13 @@ def past():
 @cache_endpoints.get('/future')
 def future():
     ticker = request.args.get('ticker', default='BTCUSD')
-    data = future_db.json().get(ticker)
+    period = request.args.get('period', default='MINUTE')
+
+    if period == 'ALL':
+        data = future_db.json().get(ticker)
+        return flask.jsonify(data)
+
+    data = future_db.json().get(ticker, f'$.{period}')
 
 
     return data
