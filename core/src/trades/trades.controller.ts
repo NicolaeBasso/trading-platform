@@ -56,8 +56,8 @@ export class TradesController {
   }
 
   @Delete('/removeAll')
-  @RolesDecorator(Roles.USER)
-  @UseGuards(RolesGuard)
+  // @RolesDecorator(Roles.USER)
+  // @UseGuards(RolesGuard)
   removeAll() {
     return this.tradeService.removeAll();
   }
