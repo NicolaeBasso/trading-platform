@@ -43,6 +43,10 @@ services:
     restart: unless-stopped
 
   lstm:
+    # image: tensorflow/tensorflow
+    # image: tensorflow/tensorflow:1.14.0-gpu-py3
+    # image: armswdev/tensorflow-arm-neoverse
+    # image: tensorflow_arm64:v1.0
     container_name: lstm
     build:
       context: ./lstm
