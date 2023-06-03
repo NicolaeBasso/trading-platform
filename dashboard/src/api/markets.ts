@@ -1,6 +1,13 @@
+import { tickers, timeFrames } from '../constants/config';
 import axios from './axios';
 
-const getTickerHistory = async ({ ticker, period }: { ticker: string; period: string }) => {
+const getTickerHistory = async ({
+  ticker = tickers.BTCUSD,
+  period = timeFrames.DAY.api,
+}: {
+  ticker: string;
+  period: string;
+}) => {
   const res = await axios.get(`past?ticker=${ticker}&period=${period}`, {
     baseURL: 'http://localhost:6380',
   });
@@ -8,7 +15,13 @@ const getTickerHistory = async ({ ticker, period }: { ticker: string; period: st
   return res.data;
 };
 
-const getTickerPrediction = async ({ ticker, period }: { ticker: string; period: string }) => {
+const getTickerPrediction = async ({
+  ticker = tickers.BTCUSD,
+  period = timeFrames.DAY.api,
+}: {
+  ticker: string;
+  period: string;
+}) => {
   const res = await axios.get(`future?ticker=${ticker}&period=${period}`, {
     baseURL: 'http://localhost:6380',
   });

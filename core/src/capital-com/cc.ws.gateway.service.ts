@@ -41,17 +41,6 @@ export class CapitalComGateway {
     const pairsRequested = clientData?.pairs || [];
     const event = 'course';
 
-    const currentSubscriptions = [...Object.keys(this.subscriptions)];
-
-    // if (
-    //   !pairsRequested.every((el) =>
-    //     Object.keys(this.subscriptions).includes(el),
-    //   )
-    // )
-    //   this.subscribeMessage([
-    //     ...new Set([...pairsRequested, ...currentSubscriptions]),
-    //   ]);
-
     const toSend = {};
     Object.entries(this.pairs).map((ticker) => {
       if (pairsRequested.includes(ticker[0])) toSend[ticker[0]] = ticker[1];
@@ -98,7 +87,6 @@ export class CapitalComGateway {
       ) {
         // Receive market data updates for subscribed epics
         // Store epic update to pairs dictionary
-
         this.pairs[data.payload.epic] = data.payload;
       }
     });
@@ -116,18 +104,27 @@ export class CapitalComGateway {
         securityToken: this.securityToken,
       };
       this.ws.send(JSON.stringify(pingMessage));
-    }, 500000);
+
+      // this.logger.debug(
+      //   'Create session & subscribe to CapitalCom WebSocket API',
+      // );
+      // this.createSessionWithCapitalCom().then(() => {
+      //   this.subscribeMessage();
+      // });
+    }, 100000);
 
     this.createSessionWithCapitalCom().then(() => {
       this.subscribeMessage();
 
-      return setInterval(async () => {
-        this.logger.debug('In axios interval!');
+      // return setInterval(async () => {
+      //   this.logger.debug(
+      //     'Create session & subscribe to CapitalCom WebSocket API',
+      //   );
 
-        this.createSessionWithCapitalCom().then(() => {
-          this.subscribeMessage();
-        });
-      }, 9 * 60 * 1000);
+      //   this.createSessionWithCapitalCom().then(() => {
+      //     this.subscribeMessage();
+      //   });
+      // }, 9 * 60 * 1000);
     });
   }
 
@@ -144,7 +141,6 @@ export class CapitalComGateway {
         cst: this.cst,
         securityToken: this.securityToken,
         payload: {
-          // epics: [...epics, 'BTCUSD', 'ETHUSD', 'US100'],
           epics: epicsToSubscribeTo,
         },
       };

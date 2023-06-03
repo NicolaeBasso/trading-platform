@@ -97,7 +97,6 @@ export default function App() {
     });
 
     socket.on('balance', (message) => {
-      console.log('balance', message);
       setAccountBalance((previousBalance: any) => {
         return { live: { ...message }, previous: previousBalance.live };
       });

@@ -26,7 +26,8 @@ export const Login = () => {
     AuthAPI.login(form).then((result) => {
       const { status } = result;
       const cookie = document.cookie;
-      const jwtEncoded = cookie.substring(4);
+
+      const jwtEncoded = cookie.substring(cookie.indexOf('jwt=') + 4);
 
       if ([200, 201].includes(status)) {
         const jwtDecoded = jwt_decode(jwtEncoded);

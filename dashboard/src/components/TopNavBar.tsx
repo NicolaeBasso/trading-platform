@@ -1,7 +1,7 @@
 import { Grid, Button } from '@mantine/core';
 import { logoutIcon } from '../assets/icons/logout';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import AccountBalanceContext from '../contexts/AccountBalanceContext';
 
 export const TopNavBar = ({ setUser }) => {

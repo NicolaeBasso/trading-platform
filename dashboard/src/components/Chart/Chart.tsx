@@ -6,7 +6,7 @@ import ChartFilter from '../ChartFilter';
 import './styles.css';
 
 const Chart = (props) => {
-  const { tickerHistory, period, setPeriod, quoteType } = props;
+  const { tickerHistory, tickerPrediction, period, setPeriod, quoteType } = props;
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -50,10 +50,9 @@ const Chart = (props) => {
     return null;
   };
 
-  const data = tickerHistory.map((el, idx, arr) => {
+  const tickerHistoryItems = tickerHistory.slice(900).map((el) => {
     const item = {
-      past: idx <= arr.length / 2 ? el.closePrice[quoteType] : null,
-      prediction: idx >= arr.length / 2 ? el.closePrice[quoteType] : null,
+      past: el.closePrice[quoteType],
       date: el.snapshotTimeUTC,
       ...el,
     };
@@ -61,10 +60,22 @@ const Chart = (props) => {
     return item;
   });
 
+  const tickerPredictionItems = tickerPrediction.map((el) => {
+    const item = {
+      prediction: el.closePrice[quoteType],
+      date: el.snapshotTimeUTC,
+      ...el,
+    };
+
+    return item;
+  });
+
+  const chartData = [...tickerHistoryItems, ...tickerPredictionItems];
+
   return (
     <Card>
       <ResponsiveContainer>
-        <AreaChart data={data}>
+        <AreaChart data={chartData}>
           <defs>
             <linearGradient id='pastColor' x1='0' y1='0' x2='0' y2='1'>
               <stop offset='5%' stopColor={'#0076c6'} stopOpacity={0.8} />
