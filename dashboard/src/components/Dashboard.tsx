@@ -30,15 +30,21 @@ const Dashboard = () => {
   const { profile = null, trades = [] } = user || {};
 
   const fetchTickerHistory = async () => {
-    const data = await MarketsAPI.getTickerHistory({ ticker, period });
-
-    setTickerHistory(data[0]?.prices);
+    try {
+      const data = await MarketsAPI.getTickerHistory({ ticker, period });
+      setTickerHistory(data?.[0]?.prices || []);
+    } catch (error) {
+      setTickerHistory([]);
+    }
   };
 
   const fetchTickerPrediction = async () => {
-    const data = await MarketsAPI.getTickerPrediction({ ticker, period });
-
-    setTickerPrediction(data[0]?.prices);
+    try {
+      const data = await MarketsAPI.getTickerPrediction({ ticker, period });
+      setTickerPrediction(data?.[0]?.prices || []);
+    } catch (error) {
+      setTickerPrediction([]);
+    }
   };
 
   const fetchUserDetails = async () => {

@@ -150,6 +150,7 @@ const Overview = ({
       </div>
 
       <NumberInput
+        size='lg'
         hideControls
         label='Position size'
         style={{ margin: '20px 0' }}

@@ -11,6 +11,7 @@ const Search = () => {
       placeholder='Pick one ticker...'
       value={ticker}
       searchable
+      size='xl'
       nothingFound='No options'
       onChange={(val) => {
         setTicker(tickers[`${val}`]);

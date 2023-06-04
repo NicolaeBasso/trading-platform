@@ -5,7 +5,7 @@ const Card = ({ children }) => {
   const { darkMode } = useContext(ThemeContext);
   return (
     <div
-      style={{ height: '80vh' }}
+      style={{ height: '80vh', overflow: 'visible' }}
       className={`w-full h-full rounded-md relative ${
         darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-neutral-200'
       }`}

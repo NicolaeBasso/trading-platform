@@ -104,27 +104,10 @@ export class CapitalComGateway {
         securityToken: this.securityToken,
       };
       this.ws.send(JSON.stringify(pingMessage));
-
-      // this.logger.debug(
-      //   'Create session & subscribe to CapitalCom WebSocket API',
-      // );
-      // this.createSessionWithCapitalCom().then(() => {
-      //   this.subscribeMessage();
-      // });
     }, 100000);
 
     this.createSessionWithCapitalCom().then(() => {
       this.subscribeMessage();
-
-      // return setInterval(async () => {
-      //   this.logger.debug(
-      //     'Create session & subscribe to CapitalCom WebSocket API',
-      //   );
-
-      //   this.createSessionWithCapitalCom().then(() => {
-      //     this.subscribeMessage();
-      //   });
-      // }, 9 * 60 * 1000);
     });
   }
 
@@ -132,7 +115,7 @@ export class CapitalComGateway {
   private async subscribeMessage(epics: string[] = []) {
     if (this.ws) {
       const epicsToSubscribeTo = [
-        ...new Set([...epics, 'BTCUSD', 'ETHUSD', 'US100']),
+        ...new Set([...epics, 'BTCUSD', 'ETHUSD', 'BTCLTC', 'US100']),
       ];
 
       const subscribeMessage = {

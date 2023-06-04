@@ -50,7 +50,7 @@ const Chart = (props) => {
     return null;
   };
 
-  const tickerHistoryItems = tickerHistory.slice(900).map((el) => {
+  const tickerHistoryItems = tickerHistory.slice(tickerHistory.length - 300).map((el) => {
     const item = {
       past: el.closePrice[quoteType],
       date: el.snapshotTimeUTC,
